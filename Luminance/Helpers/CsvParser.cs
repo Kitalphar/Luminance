@@ -50,27 +50,48 @@ namespace Luminance.Helpers
 
         private static List<dynamic> ParseCsvWithHeader(TextReader reader)
         {
-            //FINISH THIS
+            
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                HasHeaderRecord = true
+                HasHeaderRecord = true,
+                IgnoreBlankLines = true,
+                MissingFieldFound = null
             };
             using var csv = new CsvReader(reader, config);
-           
-            return csv.GetRecords<dynamic>().ToList();
+
+            var records = new List<dynamic>();
+
+            while (csv.Read())
+            {
+                dynamic row = new ExpandoObject();
+                var dict = (IDictionary<string, object>)row;
+
+                foreach (var header in csv.HeaderRecord)
+                {
+                    dict[header] = csv.GetField(header);
+                }
+
+                records.Add(row);
+            }
+
+            return records;
+
+            //return csv.GetRecords<dynamic>().ToList();
         }
 
         private static List<dynamic> ParseCsvWithoutHeader(TextReader reader)
         {
-            //FINISH THIS
             var config = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                HasHeaderRecord = false
+                HasHeaderRecord = false,
+                IgnoreBlankLines = true,
+                MissingFieldFound = null
             };
 
             using var csv = new CsvReader(reader, config);
 
             var results = new List<dynamic>();
+
             while (csv.Read())
             {
                 dynamic row = new ExpandoObject();

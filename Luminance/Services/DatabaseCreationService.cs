@@ -165,7 +165,7 @@ namespace Luminance.Services
 
             //Create currencies
 
-            List<dynamic> results.
+            var records = CsvParser.ParseCsv<dynamic>(csvPath);
 
 
             SecureUserDbQueryCoordinator.RunTransaction(userConn =>
@@ -174,11 +174,72 @@ namespace Luminance.Services
 
                 try
                 {
+                    foreach (var row in records)
+                    {
+                        var dict = (IDictionary<string, object>)row;
 
+                        using var cmd = userConn.CreateCommand();
+
+                        // Example for inserting into a Categories table
+                        cmd.CommandText = "INSERT INTO Categories (Id, Name) VALUES (@Id, @Name)";
+                        cmd.Parameters.AddWithValue("@Id", dict["Id"]);
+                        cmd.Parameters.AddWithValue("@Name", dict["Name"]);
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
+                    throw;
+                }
+            });
+        }
+
+        //Use this in the future or put it somewhere else later?
+        public static void InsertGenericCsv(string csvPath, string tableName)
+        {
+            var records = CsvParser.ParseCsv<dynamic>(csvPath);
+
+            if (records.Count == 0)
+                return;
+
+            var columnNames = CsvParser.GetColumnNames(records);
+
+            // optionally: validate columns match table schema
+
+            SecureUserDbQueryCoordinator.RunTransaction(userConn =>
+            {
+                using var transaction = userConn.BeginTransaction();
+
+                try
+                {
+                    foreach (var row in records)
+                    {
+                        var dict = (IDictionary<string, object>)row;
+
+                        string columns = string.Join(", ", columnNames);
+                        string placeholders = string.Join(", ", columnNames.Select(col => "@" + col));
+
+                        using var cmd = userConn.CreateCommand();
+                        cmd.CommandText = $"INSERT INTO {tableName} ({columns}) VALUES ({placeholders})";
+
+                        foreach (var col in columnNames)
+                        {
+                            cmd.Parameters.AddWithValue("@" + col, dict.TryGetValue(col, out var val) ? val ?? DBNull.Value : DBNull.Value);
+                        }
+
+                        cmd.ExecuteNonQuery();
+                    }
+
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
                 }
             });
         }
