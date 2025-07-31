@@ -1,0 +1,58 @@
+﻿<Window x:Class="Luminance.StartupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Luminance"
+        xmlns:views="clr-namespace:Luminance.Views"
+        xmlns:vm="clr-namespace:Luminance.ViewModels" d:DataContext="{d:DesignInstance Type=vm:StartupWindowViewModel}"
+        mc:Ignorable="d"
+        Title="StartupWindow"
+        Height="400"
+        Width="500"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        Background="Transparent"
+        >
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+            <views:LoginView />
+        </DataTemplate>
+        <!--<DataTemplate DataType="{x:Type vm:HomeViewModel}">
+            <views:HomeView />
+        </DataTemplate>-->
+    </Window.Resources>
+
+
+    <Grid>
+        <Border Background="#212529" CornerRadius="12"/>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button Width="20"
+                    Height="20"
+                    Content="X"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,20,0"
+                    Command="{Binding CloseButtonCommand}"/>
+
+            <TextBlock Text="Luminance"
+                       Foreground="white"
+                       FontSize="24"
+                       TextAlignment="Center"
+                       VerticalAlignment="Center"
+                       Grid.Row="1"/>
+
+            <ContentControl Content="{Binding CurrentViewModel}"
+                            Grid.Row="2"/>
+        </Grid>
+        
+    </Grid>
+</Window>

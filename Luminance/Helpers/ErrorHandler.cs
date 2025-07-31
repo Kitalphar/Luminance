@@ -1,0 +1,97 @@
+﻿using System.Data;
+using System.Data.SQLite;
+using System.Windows;
+using Luminance.Services;
+
+namespace Luminance.Helpers
+{
+    internal class ErrorHandler
+    {
+        private const string TranslationMissing = "TRANSLATION_MISSING";
+        private const string UnknownError = "UNKNOWN_ERROR";
+        private const string EnglishLangColumn = "en";
+
+        public static string FindErrorMessage(string errorCodeAndId)
+        {
+            int parenthesisStart = errorCodeAndId.IndexOf('(');
+            int parenthesisEnd = errorCodeAndId.IndexOf(')');
+
+            if (parenthesisStart == -1 || parenthesisEnd == -1 || parenthesisEnd <= parenthesisStart)
+                throw new InvalidOperationException("ERR_CODE_FORMAT_INVALID(401)");
+
+            string errorCode = errorCodeAndId.Substring(0, parenthesisStart);
+            string errorId = errorCodeAndId.Substring(parenthesisStart + 1, (parenthesisEnd - parenthesisStart - 1));
+            string errorCodeColumn = "error_code";
+            string errorIdColumn = "id";
+            
+            string? errorMessage = null;
+
+            AppDbQueryCoordinator.RunQuery(conn =>
+            {
+                string languageColumn = "en"; //this comes from settings later...
+
+                //Attempt to find error message with error_code
+                errorMessage = ErrorMessageQuery(conn, languageColumn, errorCodeColumn, errorCode, true);
+
+                //if keyphrase query returned translation missing, retry with english language
+                //in case it returns null, ID fallback will pick it up.
+                if (errorMessage == TranslationMissing)
+                    errorMessage = ErrorMessageQuery(conn, EnglishLangColumn, errorCodeColumn, errorCode, false);
+
+                //Fallback to ID
+                if (string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    if (!int.TryParse(errorId, out int id))
+                        throw new InvalidOperationException("ERR_CODE_ID_INVALID(402)");
+
+                    //Attempt to find error message with id number
+                    errorMessage = ErrorMessageQuery(conn, languageColumn, errorIdColumn, errorId, true);
+
+                    //if id query returned translation missing, retry with english language
+                    if (errorMessage == TranslationMissing)
+                        errorMessage = ErrorMessageQuery(conn, EnglishLangColumn, errorIdColumn, errorId, false);
+
+                    //if there is no value, it is likely this error does not exist in the database.
+                    if (errorMessage == null)
+                        throw new DataException("ERR_CODE_ID_NOT_EXIST(403)");
+                }
+            });
+
+            return errorMessage ?? UnknownError;
+        }
+
+        private static string? ErrorMessageQuery(SQLiteConnection conn, string langColumn, string column, string value, bool tryFallBack)
+        {
+            string sql = $"SELECT {langColumn} FROM error_messages WHERE {column} = @value;";
+
+            using var command = new SQLiteCommand(sql, conn);
+            command.Parameters.AddWithValue("@value", value);
+
+            using var reader = command.ExecuteReader();
+            //Read() returns true means Data exists, returns false means data does not exist or there is a typo
+            if (reader.Read())
+            {
+                var result = reader.GetString(0);
+
+                //Assuming translation is missing, we retry with the english error message.
+                if (string.IsNullOrWhiteSpace(result) && tryFallBack && langColumn != EnglishLangColumn)
+                    return TranslationMissing;
+
+                //If there is a value, return it, if not, returns null.
+                return result;
+            }
+            //If reader.Read didn't return true, return null for ID fallback to kick in
+            return null;
+        }
+
+        public static void ShowErrorMessage(string errorMessage)
+        {
+            MessageBoxResult errorMessageBox = MessageBox.Show(
+                errorMessage,
+                "An Error has occurred.",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning
+            );
+        }
+    }
+}

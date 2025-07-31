@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="PrimaryTextColor">Black</Color>
+    <Color x:Key="InputBackground">White</Color>
+    <Color x:Key="InputBorder">Gray</Color>
+
+    <SolidColorBrush x:Key="PrimaryTextColorBrush" Color="{StaticResource PrimaryTextColor}" />
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="{StaticResource InputBackground}" />
+    <SolidColorBrush x:Key="InputBorderBrush" Color="{StaticResource InputBorder}" />
+
+</ResourceDictionary>
