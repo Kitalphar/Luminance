@@ -20,6 +20,7 @@ namespace Luminance.Helpers
 
         //Registration sequence Queries
         public const string createTableQueryString = "SELECT script_content FROM db_scripts WHERE type = 'create_table' ORDER BY script_id ASC";
+        public const string InsertDefaultValuesQueryString = "SELECT script_content FROM db_scripts WHERE type = 'insert_default_values' ORDER BY script_id ASC";
         public const string createUserQueryString = $"INSERT INTO accounts (user_name,user_db,pw_salt,user_key) VALUES ({usernameParam},{userDbParam},{passwordSaltParam},{userKeyParam})";
         public const string insertFieldKeyQueryString = $"INSERT INTO fieldsec (field_key) VALUES({userFieldKeyParam})";
         

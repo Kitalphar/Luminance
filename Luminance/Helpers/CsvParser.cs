@@ -1,6 +1,7 @@
 ﻿using System.Dynamic;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
 using CsvHelper;
 using CsvHelper.Configuration;
 
@@ -18,7 +19,7 @@ namespace Luminance.Helpers
             if (firstLine == null)
                 return new List<dynamic>();
 
-            string[] firtRow = firstLine.Split(",");
+            string[] firtRow = firstLine.Split(",") ?? Array.Empty<string>();
             string[] secondRow = secondLine?.Split(",") ?? Array.Empty<string>();
 
             bool hasHeader = IsProbablyHeader(firtRow, secondRow);
@@ -33,20 +34,61 @@ namespace Luminance.Helpers
 
         private static bool IsProbablyHeader(string[] firstRow, string[] secondRow)
         {
-            int headerScore = 0;
+            int score = 0;
+            int totalChecks = 0;
+            double confidenceScore = 0;
+
+            //Check 0: First & Second row must exist and contain at least one non-empty field.
+            if (firstRow.Length == 0 || firstRow.All(string.IsNullOrWhiteSpace))
+                throw new InvalidOperationException("ERR_CSV_MISSING_ROW(404)");
+
+            if (secondRow.Length == 0 || secondRow.All(string.IsNullOrWhiteSpace))
+                throw new InvalidOperationException("ERR_CSV_MISSING_ROW(404)");
+
+            //Check 1: Type mismatch between rows
+            totalChecks++;
+            int typeMismatchCount = 0;
 
             for (int i = 0; i < Math.Min(firstRow.Length, secondRow.Length); i++)
             {
-                bool firstIsString = !double.TryParse(firstRow[i], out _);
-                bool secondIsNumber = double.TryParse(secondRow[i], out _);
+                bool firstIsString = !double.TryParse(firstRow[i], out _) && !DateTime.TryParse(firstRow[i], out _);
+                bool secondIsNumberOrDate = double.TryParse(secondRow[i], out _) || DateTime.TryParse(secondRow[i], out _);
 
-                if (firstIsString && secondIsNumber)
-                    headerScore++;
+
+                if (firstIsString && secondIsNumberOrDate)
+                    typeMismatchCount++;
             }
 
-            return headerScore > (firstRow.Length / 2); // Simple majority rule
-        }
+            //If first row has string and second row has type mismatch, it is likely a header.
+            if (typeMismatchCount > 0)
+                score++;
 
+            //Check 2: Header-like formatting. (underscores, spaces, camelCase, etc...)
+            totalChecks++;
+            int headerLikeFormatCount = firstRow.Count(s => Regex.IsMatch(s, @"[\s_]|[a-z][A-Z]"));
+
+            if (headerLikeFormatCount > 0)
+                score++;
+
+            //Check 3: Common header terms
+            totalChecks++;
+            string[] commonTerms = { "id", "name", "date", "code", "type", "amount", "value", "desc" };
+            int headerKeywordCount = firstRow.Count(cell => commonTerms.Any(term => cell.Trim().ToLower().Contains(term)));
+
+            if (headerKeywordCount > 0)
+                score++;
+
+            //Check 4: Duplicates in first row.
+            totalChecks++ ;
+            if (firstRow.Distinct().Count() != firstRow.Length)
+                score -= 2; //if true, it's invalid header.
+
+            //Normalize score
+            confidenceScore = Math.Clamp((double)score / totalChecks, 0, 1);
+
+            //With 0.5 tresshold we need at least 2 valid checks and no duplicates in first row to pass.
+            return confidenceScore >= 0.5;
+        }
 
         private static List<dynamic> ParseCsvWithHeader(TextReader reader)
         {

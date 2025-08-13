@@ -1,6 +1,5 @@
 ﻿using System.Data.SQLite;
 using System.IO;
-using System.Transactions;
 using System.Windows;
 using Luminance.Helpers;
 
@@ -111,45 +110,35 @@ namespace Luminance.Services
 
                 SQLiteConnection.CreateFile(dbFile);
 
-                var createTableQueries = new List<string>();
-
                 //Get CREATE TABLE scripts from App.db
-                AppDbQueryCoordinator.RunQuery(appConn => 
-                {
-                    using var command = new SQLiteCommand(SqlQueryHelper.createTableQueryString, appConn);
-                    using var reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        createTableQueries.Add(reader.GetString(0));
-                    }
-                });
+                var createTableQueries = GetDbScriptsFromAppDb(SqlQueryHelper.createTableQueryString);
 
                 //Connect to User's database file.
                 string connectionString = $"Data Source={dbFile};Version=3;";
                 UserDatabaseService.Initialize(connectionString);
 
-
-                //Create default tables in the user's database file.
-                SecureUserDbQueryCoordinator.RunQuery(userConn =>
+                //Enable WAL mode for future queries.
+                SecureUserDbQueryCoordinator.RunQuery(userConn => 
                 {
-                    //Enable WAL mode
                     using (var cmd = new SQLiteCommand("PRAGMA journal_mode=WAL;", userConn))
                         cmd.ExecuteNonQuery();
-
-                    foreach (var createTableQuery in createTableQueries)
-                    {
-                        using var createCmd = new SQLiteCommand(createTableQuery, userConn);
-                        createCmd.ExecuteNonQuery();
-                    }
                 });
 
-                //Fill database with default values.
+                //Create default tables in the user's database file.
+                ExecuteUserDbScripts(createTableQueries);
 
+                //Create default categories.
+                string categoriesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/csv/categories.csv");
+                InsertDeafultValuesFromCsv(categoriesPath);
 
+                //Create currencies (This has to be before accounts because of foreign key constraints.)
+                string currenciesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/csv/currencies.csv");
+                InsertDeafultValuesFromCsv(currenciesPath);
 
-                InsertDeafultValues(string.Empty);
+                //Look up querystrings and create default accounts
+                var createAccountsQueries = GetDbScriptsFromAppDb(SqlQueryHelper.InsertDefaultValuesQueryString);
 
+                ExecuteUserDbScripts(createAccountsQueries);
             }
             catch (Exception ex)
             {
@@ -157,16 +146,39 @@ namespace Luminance.Services
             }
         }
 
-        private static void InsertDeafultValues(string csvPath)
+        private static List<string> GetDbScriptsFromAppDb(string queryString)
         {
-            //Create default accounts
+            var queryList = new List<string>();
 
-            //Create default categories.
+            AppDbQueryCoordinator.RunQuery(appConn =>
+            {
+                using var command = new SQLiteCommand(queryString, appConn);
+                using var reader = command.ExecuteReader();
 
-            //Create currencies
+                while (reader.Read())
+                {
+                    queryList.Add(reader.GetString(0));
+                }
+            });
 
+            return queryList;
+        }
+
+        private static void ExecuteUserDbScripts(List<string> queryScripts)
+        {
+            SecureUserDbQueryCoordinator.RunQuery(userConn =>
+            {
+                foreach (var queryScript in queryScripts)
+                {
+                    using var createCmd = new SQLiteCommand(queryScript, userConn);
+                    createCmd.ExecuteNonQuery();
+                }
+            });
+        }
+
+        private static void InsertDeafultValuesFromCsv(string csvPath)
+        {
             var records = CsvParser.ParseCsv<dynamic>(csvPath);
-
 
             SecureUserDbQueryCoordinator.RunTransaction(userConn =>
             {
@@ -208,7 +220,7 @@ namespace Luminance.Services
 
             var columnNames = CsvParser.GetColumnNames(records);
 
-            // optionally: validate columns match table schema
+            //Validate columns match table schema?
 
             SecureUserDbQueryCoordinator.RunTransaction(userConn =>
             {

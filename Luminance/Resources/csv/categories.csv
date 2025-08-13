@@ -1,0 +1,94 @@
+category_id,category_name_en,type,parent_category
+1,Income,category,
+2,Housing,category,
+3,Transportation,category,
+4,Food & Dining,category,
+5,Health & Wellness,category,
+6,Education,category,
+7,Entertainment & Leisure,category,
+8,Shopping,category,
+9,Work & Business,category,
+10,Debt,category,
+11,Savings & Investments,category,
+12,Childcare,category,
+13,Pet Care,category,
+14,Miscellaneous,category,
+15,Salary,income,1
+16,Freelance,income,1
+17,Side Hustle,income,1
+18,Business Income,income,1
+19,Investments,income,1
+20,Refunds,income,1
+21,Other Income,income,1
+22,Rent,expense,2
+23,Mortgage,expense,2
+24,Property Tax,expense,2
+25,Home Insurance,expense,2
+26,Home Maintenance,expense,2
+27,Utilities,expense,2
+28,Internet,expense,2
+29,Phone,expense,2
+30,Television,expense,2
+31,Fuel,expense,3
+32,Public Transit,expense,3
+33,Car Payment,expense,3
+34,Car Insurance,expense,3
+35,Car Maintenance,expense,3
+36,Taxi,expense,3
+37,Rideshare,expense,3
+38,Parking,expense,3
+39,Tolls,expense,3
+40,Groceries,expense,4
+41,Restaurants,expense,4
+42,Coffee,expense,4
+43,Snacks,expense,4
+44,Delivery,expense,4
+45,Takeout,expense,4
+46,Health Insurance,expense,5
+47,Doctor,expense,5
+48,Dentist,expense,5
+49,Prescriptions,expense,5
+50,Mental Health,expense,5
+51,Other Healthcare Expenses,expense,5
+52,Fitness,expense,5
+53,Gym,expense,5
+54,Tuition,expense,6
+55,Books,expense,6
+56,Supplies,expense,6
+57,Courses,expense,6
+58,Certifications,expense,6
+59,Subscriptions,expense,7
+60,Hobbies,expense,7
+61,Events,expense,7
+62,Outings,expense,7
+63,Travel,expense,7
+64,Vacation,expense,7
+65,Clothing,expense,8
+66,Electronics,expense,8
+67,Household Items,expense,8
+68,Gifts,expense,8
+69,Equipment,expense,9
+70,Tools,expense,9
+71,Office Supplies,expense,9
+72,Software,expense,9
+73,Credit Cards,expense,10
+74,Student Loans,expense,10
+75,Personal Loans,expense,10
+76,Auto Loans,expense,10
+77,Installment Plan,expense,10
+78,Savings Transfer,expense,11
+79,Savings Deposit,income,11
+80,Babysitting,expense,12
+81,Daycare,expense,12
+82,School & Education,expense,12
+83,Clothing & Shoes,expense,12
+84,Toys & Activities,expense,12
+85,Medical & Dental,expense,12
+86,Child Support,expense,12
+87,Pet Food & Supplies,expense,13
+88,Veterinary Care,expense,13
+89,Grooming,expense,13
+90,Training,expense,13
+91,Pet Sitting,expense,13
+92,Donations,expense,14
+93,Miscellaneous,expense,14
