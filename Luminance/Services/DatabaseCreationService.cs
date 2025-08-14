@@ -129,14 +129,14 @@ namespace Luminance.Services
 
                 //Create default categories.
                 string categoriesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/csv/categories.csv");
-                InsertDeafultValuesFromCsv(categoriesPath);
+                InsertDeafultValuesFromCsv(categoriesPath, "categories");
 
                 //Create currencies (This has to be before accounts because of foreign key constraints.)
                 string currenciesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/csv/currencies.csv");
-                InsertDeafultValuesFromCsv(currenciesPath);
+                InsertDeafultValuesFromCsv(currenciesPath, "currencies");
 
                 //Look up querystrings and create default accounts
-                var createAccountsQueries = GetDbScriptsFromAppDb(SqlQueryHelper.InsertDefaultValuesQueryString);
+                var createAccountsQueries = GetDbScriptsFromAppDb(SqlQueryHelper.defaultValuesQueryString);
 
                 ExecuteUserDbScripts(createAccountsQueries);
             }
@@ -176,7 +176,7 @@ namespace Luminance.Services
             });
         }
 
-        private static void InsertDeafultValuesFromCsv(string csvPath)
+        private static void InsertDeafultValuesFromCsv(string csvPath, string filter)
         {
             var records = CsvParser.ParseCsv<dynamic>(csvPath);
 
@@ -192,10 +192,22 @@ namespace Luminance.Services
 
                         using var cmd = userConn.CreateCommand();
 
-                        // Example for inserting into a Categories table
-                        cmd.CommandText = "INSERT INTO Categories (Id, Name) VALUES (@Id, @Name)";
-                        cmd.Parameters.AddWithValue("@Id", dict["Id"]);
-                        cmd.Parameters.AddWithValue("@Name", dict["Name"]);
+                        switch (filter)
+                        {
+                            case "categories":
+                                cmd.CommandText = SqlQueryHelper.insertDefaultCategoriesQueryString;
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.idParam, dict[SqlQueryHelper.categoriesTableIdColumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.nameParam, dict[SqlQueryHelper.categoriesTableENNameColumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.typeParam, dict[SqlQueryHelper.categoriesTableTypeColumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.categoriesTableParentIdParam, dict[SqlQueryHelper.categoriesTableParentIdColumn]);
+                                break;
+                            case "currencies":
+                                cmd.CommandText = SqlQueryHelper.insertDefaultCurrenciesQueryString;
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.idParam, dict[SqlQueryHelper.currenciesTableIdcolumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.descriptionParam, dict[SqlQueryHelper.currenciesTableSymbolcolumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.nameParam, dict[SqlQueryHelper.currenciesTableNamecolumn]);
+                                break;
+                        }
 
                         cmd.ExecuteNonQuery();
                     }

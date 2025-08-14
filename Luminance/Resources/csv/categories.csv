@@ -1,4 +1,4 @@
-category_id,category_name_en,type,parent_category
+category_id,category_name_en,type,parent_category_id
 1,Income,category,
 2,Housing,category,
 3,Transportation,category,

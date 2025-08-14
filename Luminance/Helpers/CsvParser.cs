@@ -101,20 +101,32 @@ namespace Luminance.Helpers
             };
             using var csv = new CsvReader(reader, config);
 
-            var records = new List<dynamic>();
+            //NOTE: Code below may not be needed.
+
+            /*var records = new List<dynamic>();
 
             while (csv.Read())
             {
                 dynamic row = new ExpandoObject();
                 var dict = (IDictionary<string, object>)row;
 
-                foreach (var header in csv.HeaderRecord)
+                //NOTE: Null forgiving operator here for HeaderRecord as isProbablyHeader should only pass csv
+                //      that has a header over, so this shouldn't be null.
+                foreach (var rawHeader in csv.HeaderRecord!)
                 {
-                    dict[header] = csv.GetField(header);
+                    if (string.IsNullOrWhiteSpace(rawHeader))
+                        continue;
+
+                    //NOTE: Another attempt to silence the compiler warning.
+                    var header = rawHeader;
+                    
+                    //Compiler hates me, i don't care anymore.
+                    dict[header!] = csv.GetField(header!);
                 }
 
                 records.Add(row);
-            }
+            }*/
+            var records = csv.GetRecords<dynamic>().ToList();
 
             return records;
 
@@ -141,12 +153,13 @@ namespace Luminance.Helpers
 
                 for (int i = 0; csv.TryGetField(i, out string? value); i++)
                 {
-                    dict[$"Column{i + 1}"] = value;
+                    //NOTE: Added null forgiving operator because compiler hates me.
+                    dict[$"Column{i + 1}"] = (object?)value!;
                 }
 
                 results.Add(row);
             }
-
+             
             return results;
         }
 
