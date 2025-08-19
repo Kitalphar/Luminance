@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
-using System.Data;
-using System.Data.SQLite;
-using System.IO;
+using System.Security.Cryptography;
 using System.Windows.Input;
 using Luminance.Helpers;
 using Luminance.Services;
@@ -93,29 +91,14 @@ namespace Luminance.ViewModels
         {
             try
             {
-                var result = FindUserDatabaseName(userName);
-                string userNameHash = result.userNameHash;
-                string dbName = result.dbName;
+                IAuthService authService = new AuthService();
 
-                //Encrypt password.
-                string userKey = FindUserkey(userNameHash, password, false);
+                string authenticationResult = authService.LoginWithPassword(userName, password);
 
-                InitializeDatabaseConnection(dbName);
-
-                //Query fieldKey. If decryption on the database file fails, the
-                //Authentication fails.
-                string encryptedFieldKey = RunFieldKeyQuery();
-
-                //decrypt fieldkey
-                string fieldKey = ReturnDecryptedFieldKey(encryptedFieldKey, userKey);
-
-                AppSettings.Instance.Set("fieldKey", fieldKey);
-                AppSettings.Instance.Set("userKey", userKey);
-
-                //Switch to Home View.
-
-                //TODO: Move Login sequences to AuthService.
-                //TODO: Maybe change functions to return bool success?
+                if (EvaluateAuthenticationResult(authenticationResult))
+                {
+                    //TODO: Switch to Home View.
+                }
             }
             catch
             {
@@ -127,29 +110,14 @@ namespace Luminance.ViewModels
         {
             try
             {
-                var result = FindUserDatabaseName(userName);
-                string userNameHash = result.userNameHash;
-                string dbName = result.dbName;
+                IAuthService authService = new AuthService();
 
-                //Query encrypted userKey from App.db, and decrypt it with recoveryKey
-                string userKey = FindUserkey(userNameHash,recoveryKey, true);
+                string authenticationResult = authService.LoginWithPassword(userName, recoveryKey);
 
-                InitializeDatabaseConnection(dbName);
-
-                //Query fieldKey. If decryption on the database file fails, the
-                //Authentication fails.
-                string encryptedFieldKey = RunFieldKeyQuery();
-
-                //decrypt fieldkey
-                string fieldKey = ReturnDecryptedFieldKey(encryptedFieldKey, userKey);
-
-                AppSettings.Instance.Set("fieldKey", fieldKey);
-                AppSettings.Instance.Set("userKey", userKey);
-
-                //Switch to Home View.
-
-                //TODO: Move Login sequences to AuthService.
-                //TODO: Maybe change functions to return bool success?
+                if (EvaluateAuthenticationResult(authenticationResult))
+                {
+                    //TODO: Switch to Home View.
+                }
             }
             catch
             {
@@ -157,110 +125,22 @@ namespace Luminance.ViewModels
             }
         }
 
-        private static bool UserExists(string userName)
+        private bool EvaluateAuthenticationResult(string authenticationResult)
         {
-            return AppDbQueryCoordinator.RunQuery(conn =>
+            switch(authenticationResult)
             {
-                using var command = new SQLiteCommand(SqlQueryHelper.userExistQueryString, conn);
-                command.Parameters.AddWithValue(SqlQueryHelper.usernameParam, userName);
+                case "Success":
+                    return true;
 
-                using var reader = command.ExecuteReader();
-                return reader.Read();
-            });
-        }
+                case "AuthenticationFailed":
+                    throw new UnauthorizedAccessException("Authentication failed. Invalid key or credentials.");
 
-        private static (string userNameHash, string dbName) FindUserDatabaseName(string userName)
-        {
-            ICryptoService cryptoService = new CryptoService();
+                case "UnknownError":
+                    throw new CryptographicException("An unknown error occurred during authentication.");
 
-            string userNameHash = cryptoService.HashUserName(userName);
-
-            if (!UserExists(userNameHash))
-                throw new DataException("ERR_USER_NOT_EXISTS(501)");
-
-            string dbColumnName = "user_db";
-            string dbName = RunUserDataSingleReturnQuery(dbColumnName , userNameHash);
-
-            return (userNameHash, dbName);
-        }
-
-        private static void InitializeDatabaseConnection(string dbName)
-        {
-            string dataFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
-            string dbFile = Path.Combine(dataFolder, dbName);
-
-            string connectionString = $"Data Source={dbFile};Version=3;";
-            UserDatabaseService.Initialize(connectionString);
-
-            AppSettings.Instance.Set("userDbLocation", dbFile);
-            AppSettings.Instance.Set("userDbconnString", connectionString);
-        }
-
-        private static string FindUserkey(string userNameHash ,string passwordOrRecoveryKey, bool isRecoveryKey)
-        {
-            ICryptoService cryptoService = new CryptoService();
-            string userKey = string.Empty;
-
-            if(isRecoveryKey)
-            {
-                string encryptedUserKeyColumn = "user_key";
-                string encryptedUserKey = RunUserDataSingleReturnQuery(encryptedUserKeyColumn, userNameHash);
-
-                userKey = cryptoService.DecryptEncryptedUserKey(encryptedUserKey, passwordOrRecoveryKey);
+                default:
+                    throw new InvalidOperationException($"Unexpected authentication result: {authenticationResult}");
             }
-
-            string saltColumnName = "pw_salt";
-            string salt = RunUserDataSingleReturnQuery(saltColumnName, userNameHash);
-
-            userKey = cryptoService.GenerateUserKey(passwordOrRecoveryKey, salt);
-
-            return userKey;
-        }
-
-        private static string RunUserDataSingleReturnQuery(string columnValue, string filterValue)
-        {
-            string returnString = string.Empty;
-
-            string queryString = SqlQueryHelper.UserDataSingleColumnReturnQueryBuilder(columnValue);
-
-            AppDbQueryCoordinator.RunQuery(conn =>
-            {
-                using var command = new SQLiteCommand(queryString, conn);
-                command.Parameters.AddWithValue(SqlQueryHelper.usernameParam, filterValue);
-
-                using var reader = command.ExecuteReader();
-                if (!reader.Read())
-                    throw new DataException("ERR_NO_DATA(502)");
-
-                returnString = reader.GetString(0);
-            });
-
-            return returnString;
-        }
-
-        private static string RunFieldKeyQuery()
-        {
-            string encryptedFieldKey = string.Empty;
-
-            SecureUserDbQueryCoordinator.RunQuery(conn =>
-            {
-                using var command = new SQLiteCommand(SqlQueryHelper.findFieldKeyQueryString, conn);
-                using var reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    encryptedFieldKey = reader.GetString(0);
-                }
-            });
-
-            return encryptedFieldKey;
-        }
-
-        private static string ReturnDecryptedFieldKey(string encryptedFieldKey, string userKey)
-        {
-            ICryptoService cryptoService = new CryptoService();
-
-            return cryptoService.DecryptFieldKey(encryptedFieldKey, userKey);
         }
 
         private static (string userName, string password) SanitizeCredentials(string userNameInput, string passwordInput)

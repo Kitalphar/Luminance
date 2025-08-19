@@ -139,7 +139,7 @@ namespace Luminance.Services
 
                 ExecuteUserDbScripts(createAccountsQueries);
             }
-            catch (Exception ex)
+            catch 
             {
                 throw;
             }
@@ -213,7 +213,7 @@ namespace Luminance.Services
 
                     transaction.Commit();
                 }
-                catch (Exception ex)
+                catch 
                 {
                     transaction.Rollback();
                     throw;

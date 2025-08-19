@@ -2,7 +2,7 @@
 {
     public interface IAuthService
     {
-        string LoginWithPassword(string enteredPassword, string storedSalt, string storedHash);
-        //string LoginWithRecoveryKey(string encryptedUserKey, string recoveryKey);
+        string LoginWithPassword(string userName, string password);
+        string LoginWithRecoveryKey(string userName, string recoveryKey);
     }
 }
