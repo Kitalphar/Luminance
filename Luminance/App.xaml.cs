@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
+using Luminance.Helpers;
 using Luminance.Services;
 using Luminance.ViewModels;
 
@@ -22,6 +23,28 @@ namespace Luminance
             //mainWindow.DataContext = mainWindowViewModel;
             //mainWindow.ShowDialog();
 
+            //UI thread exceptions
+            this.DispatcherUnhandledException += (s, e) =>
+            {
+                HandleFatalError(e.Exception);
+                e.Handled = true; // prevent crash
+            };
+
+            //Non-UI thread exceptions
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                if (e.ExceptionObject is Exception ex)
+                    HandleFatalError(ex);
+            };
+
+            //Unobserved task exceptions
+            TaskScheduler.UnobservedTaskException += (s, e) =>
+            {
+                HandleFatalError(e.Exception);
+                e.SetObserved();
+            };
+
+
             StartupWindow startupWindow = new StartupWindow();
             StartupWindowViewModel startupWindowViewModel = new StartupWindowViewModel(); 
 
@@ -43,6 +66,13 @@ namespace Luminance
                 Application.Current.Shutdown();
             }
             */
+        }
+
+        private void HandleFatalError(Exception ex)
+        {
+            //Send through errorHandler
+            string msg = ErrorHandler.FindErrorMessage(ex.Message);
+            ErrorHandler.ShowErrorMessage(msg);
         }
 
         protected override void OnExit(ExitEventArgs e)

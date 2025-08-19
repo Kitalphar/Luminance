@@ -9,12 +9,22 @@ namespace Luminance.Helpers
     {
         private const string TranslationMissing = "TRANSLATION_MISSING";
         private const string UnknownError = "UNKNOWN_ERROR";
+        private const string FatalError = "FATAL_ERROR";
         private const string EnglishLangColumn = "en";
 
+        //Not sure how to do this yet...
+        public enum ErrorSeverity
+        {
+            Recoverable,
+            Fatal
+        }
         public static string FindErrorMessage(string errorCodeAndId)
         {
             int parenthesisStart = errorCodeAndId.IndexOf('(');
             int parenthesisEnd = errorCodeAndId.IndexOf(')');
+
+            if (errorCodeAndId.StartsWith("ERR_CODE_"))
+                return UnknownError;
 
             if (parenthesisStart == -1 || parenthesisEnd == -1 || parenthesisEnd <= parenthesisStart)
                 throw new InvalidOperationException("ERR_CODE_FORMAT_INVALID(401)");
@@ -23,7 +33,7 @@ namespace Luminance.Helpers
             string errorId = errorCodeAndId.Substring(parenthesisStart + 1, (parenthesisEnd - parenthesisStart - 1));
             string errorCodeColumn = "error_code";
             string errorIdColumn = "id";
-            
+
             string? errorMessage = null;
 
             AppDbQueryCoordinator.RunQuery(conn =>
