@@ -55,7 +55,6 @@ namespace Luminance.Services
                 //Store encrypted fieldKey
                 SecureUserDbQueryCoordinator.RunQuery(conn =>
                 {
-                    //const string insertFieldKey = "INSERT INTO fieldsec (field_key) VALUES(@fieldkey)";
 
                     using var command = new SQLiteCommand(SqlQueryHelper.insertFieldKeyQueryString, conn);
                     command.Parameters.AddWithValue(SqlQueryHelper.userFieldKeyParam, encryptedFieldKey);

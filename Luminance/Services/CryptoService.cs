@@ -181,11 +181,12 @@ namespace Luminance.Services
             return EncryptToBase64(fieldKeyBytes, userKeyBytes);
         }
 
-        public byte[] DecryptFieldKey(string encryptedFieldKey, string userKey)
+        public string DecryptFieldKey(string encryptedFieldKey, string userKey)
         {
             var userKeyBytes = ConvertTo16ByteKey(userKey);
 
-            return DecryptFromBase64(encryptedFieldKey, userKeyBytes);
+            byte[] decryptedBytes = DecryptFromBase64(encryptedFieldKey, userKeyBytes);
+            return Convert.ToBase64String(decryptedBytes);
         }
 
         public string EncryptData(string plainText, string fieldKey)

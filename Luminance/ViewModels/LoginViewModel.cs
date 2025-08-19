@@ -100,15 +100,22 @@ namespace Luminance.ViewModels
                 //Encrypt password.
                 string userKey = FindUserkey(userNameHash, password, false);
 
-                //Attempt to decrypt the database file, if it fails, throw error.
-                //On a success, store encrypted password, (userKey) in settings singleton.
-                //Encrypt again.
+                InitializeDatabaseConnection(dbName);
+
+                //Query fieldKey. If decryption on the database file fails, the
+                //Authentication fails.
+                string encryptedFieldKey = RunFieldKeyQuery();
+
+                //decrypt fieldkey
+                string fieldKey = ReturnDecryptedFieldKey(encryptedFieldKey, userKey);
+
+                AppSettings.Instance.Set("fieldKey", fieldKey);
                 AppSettings.Instance.Set("userKey", userKey);
 
-                //Query fieldKey, decrypt it and store it in settings singleton.
-                //AppSettings.Instance.Set("fieldKey", fieldKey);
-
                 //Switch to Home View.
+
+                //TODO: Move Login sequences to AuthService.
+                //TODO: Maybe change functions to return bool success?
             }
             catch
             {
@@ -127,14 +134,22 @@ namespace Luminance.ViewModels
                 //Query encrypted userKey from App.db, and decrypt it with recoveryKey
                 string userKey = FindUserkey(userNameHash,recoveryKey, true);
 
+                InitializeDatabaseConnection(dbName);
 
-                //Attempt to decrypt the database file, if it fails, throw error.
-                //On a success, store encrypted password, (userKey) in settings singleton.
-                //Encrypt again.
+                //Query fieldKey. If decryption on the database file fails, the
+                //Authentication fails.
+                string encryptedFieldKey = RunFieldKeyQuery();
+
+                //decrypt fieldkey
+                string fieldKey = ReturnDecryptedFieldKey(encryptedFieldKey, userKey);
+
+                AppSettings.Instance.Set("fieldKey", fieldKey);
                 AppSettings.Instance.Set("userKey", userKey);
 
-                //On success, query fieldKey, decrypt it and store it in settings singleton.
-                //AppSettings.Instance.Set("fieldKey", fieldKey);
+                //Switch to Home View.
+
+                //TODO: Move Login sequences to AuthService.
+                //TODO: Maybe change functions to return bool success?
             }
             catch
             {
@@ -164,7 +179,7 @@ namespace Luminance.ViewModels
                 throw new DataException("ERR_USER_NOT_EXISTS(501)");
 
             string dbColumnName = "user_db";
-            string dbName = RunSingleReturnQuery(SqlQueryHelper.findUserDataQueryString, dbColumnName , userNameHash); ;
+            string dbName = RunUserDataSingleReturnQuery(dbColumnName , userNameHash);
 
             return (userNameHash, dbName);
         }
@@ -189,27 +204,28 @@ namespace Luminance.ViewModels
             if(isRecoveryKey)
             {
                 string encryptedUserKeyColumn = "user_key";
-                string encryptedUserKey = RunSingleReturnQuery(SqlQueryHelper.findUserDataQueryString, encryptedUserKeyColumn, userNameHash);
+                string encryptedUserKey = RunUserDataSingleReturnQuery(encryptedUserKeyColumn, userNameHash);
 
                 userKey = cryptoService.DecryptEncryptedUserKey(encryptedUserKey, passwordOrRecoveryKey);
             }
 
             string saltColumnName = "pw_salt";
-            string salt = RunSingleReturnQuery(SqlQueryHelper.findUserDataQueryString, saltColumnName, userNameHash);
+            string salt = RunUserDataSingleReturnQuery(saltColumnName, userNameHash);
 
             userKey = cryptoService.GenerateUserKey(passwordOrRecoveryKey, salt);
 
             return userKey;
         }
 
-        private static string RunSingleReturnQuery(string queryString, string columnValue, string filterValue)
+        private static string RunUserDataSingleReturnQuery(string columnValue, string filterValue)
         {
             string returnString = string.Empty;
+
+            string queryString = SqlQueryHelper.UserDataSingleColumnReturnQueryBuilder(columnValue);
 
             AppDbQueryCoordinator.RunQuery(conn =>
             {
                 using var command = new SQLiteCommand(queryString, conn);
-                command.Parameters.AddWithValue(SqlQueryHelper.columnParam, columnValue);
                 command.Parameters.AddWithValue(SqlQueryHelper.usernameParam, filterValue);
 
                 using var reader = command.ExecuteReader();
@@ -220,6 +236,31 @@ namespace Luminance.ViewModels
             });
 
             return returnString;
+        }
+
+        private static string RunFieldKeyQuery()
+        {
+            string encryptedFieldKey = string.Empty;
+
+            SecureUserDbQueryCoordinator.RunQuery(conn =>
+            {
+                using var command = new SQLiteCommand(SqlQueryHelper.findFieldKeyQueryString, conn);
+                using var reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    encryptedFieldKey = reader.GetString(0);
+                }
+            });
+
+            return encryptedFieldKey;
+        }
+
+        private static string ReturnDecryptedFieldKey(string encryptedFieldKey, string userKey)
+        {
+            ICryptoService cryptoService = new CryptoService();
+
+            return cryptoService.DecryptFieldKey(encryptedFieldKey, userKey);
         }
 
         private static (string userName, string password) SanitizeCredentials(string userNameInput, string passwordInput)

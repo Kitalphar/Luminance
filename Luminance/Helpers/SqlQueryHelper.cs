@@ -4,6 +4,8 @@ namespace Luminance.Helpers
 {
     internal class SqlQueryHelper
     {
+        //NOTE: PARAMETERS CAN NOT BE USED FOR COLUMNS!!!!!
+
         //Public Parameters
         public const string usernameParam = "@username";
         public const string passwordParam = "@password";
@@ -17,6 +19,9 @@ namespace Luminance.Helpers
         public const string typeParam = "@type";
         public const string descriptionParam = "@description";
 
+        //App.db accounts table parameters
+        private const string appAccountsDataTable = "accounts";
+
 
         //App.db db_scripts table parameters
         private const string scriptDataTable = "db_scripts";
@@ -24,7 +29,7 @@ namespace Luminance.Helpers
         private const string scriptTableScriptIdColumn = "script_id";
         private const string scriptTableScriptTypeColumn = "type";
 
-        //App.db categories table parameters
+        //User.db categories table parameters
         public const string categoriesDataTable = "categories";
         public const string categoriesTableIdColumn = "category_id";
         public const string categoriesTableENNameColumn = "category_name_en";
@@ -32,12 +37,11 @@ namespace Luminance.Helpers
         public const string categoriesTableParentIdColumn = "parent_category_id";
         public const string categoriesTableParentIdParam = "@parentid";
 
-        //App.db currencies table parameters.
+        //User.db currencies table parameters.
         public const string currenciesDataTable = "currencies";
         public const string currenciesTableIdcolumn = "currency_code";
         public const string currenciesTableSymbolcolumn = "currency_symbol";
         public const string currenciesTableNamecolumn = "currency_name";
-
 
         //Registration sequence Queries
         public const string createTableQueryString = $"SELECT {scriptTableScriptContentColumn} FROM {scriptDataTable} WHERE {scriptTableScriptTypeColumn} = 'create_table' ORDER BY {scriptTableScriptIdColumn} ASC";
@@ -50,11 +54,15 @@ namespace Luminance.Helpers
 
         //Login sequence Queries
         public const string userExistQueryString = $"SELECT 1 FROM accounts WHERE user_name = {usernameParam} LIMIT 1";
-        public const string findUserDataQueryString = $"SELECT {columnParam} FROM accounts WHERE user_name = {usernameParam}";
+        public const string findFieldKeyQueryString = $"SELECT field_key FROM fieldsec";
 
 
+        //String Builder Functions
 
-
+        public static string UserDataSingleColumnReturnQueryBuilder(string column)
+        {
+            return $"SELECT {column} FROM {appAccountsDataTable} WHERE user_name = {usernameParam}";
+        }
 
 
         //public string BuildCreateTableLookUpQuery()

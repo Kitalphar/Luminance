@@ -12,7 +12,7 @@
         string ObfuscateDatabaseName(string originalName);
         string GenerateFieldKey();
         string EncryptFieldKey(string fieldKey, string userKey);
-        byte[] DecryptFieldKey(string encryptedFieldKey, string userKey);
+        string DecryptFieldKey(string encryptedFieldKey, string userKey);
         string EncryptData(string plainText, string fieldKey);
         string DecryptData(string cipherText, string fieldKey);
     }
