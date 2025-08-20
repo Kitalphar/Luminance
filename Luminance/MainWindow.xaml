@@ -15,7 +15,9 @@
         WindowStyle="None"
         Background="Transparent"
         >
+
     
+
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <views:LoginView />
@@ -29,6 +31,7 @@
     
     <Grid>
         <Border Background="#212529" CornerRadius="12"/>
+        <ContentControl Content="{Binding CurrentViewModel}" />
 
         <Grid>
             <Grid.RowDefinitions>

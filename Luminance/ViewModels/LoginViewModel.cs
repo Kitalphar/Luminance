@@ -11,6 +11,8 @@ namespace Luminance.ViewModels
         public ICommand HandleLoginCommand { get; }
         public ICommand HandleRegistrationCommand { get; }
 
+        public event Action? LoginSucceeded;
+
         private string? _userName;
         public string UserName
         {
@@ -65,8 +67,8 @@ namespace Luminance.ViewModels
 
                 if (sanitizationResult.password.Length > 30)
                     LoginWithRecoveryKey( sanitizationResult.userName, sanitizationResult.password);
-
-                LoginWithPassword(sanitizationResult.userName, sanitizationResult.password);
+                else
+                    LoginWithPassword(sanitizationResult.userName, sanitizationResult.password);
             }
             catch (Exception ex)
             {
@@ -80,6 +82,8 @@ namespace Luminance.ViewModels
                 var sanitizationResult = SanitizeCredentials(UserName, Password);
 
                 DatabaseCreationService.CreateNewDatabase(sanitizationResult.userName, sanitizationResult.password);
+
+                LoginSucceeded?.Invoke();
             }
             catch (Exception ex)
             {
@@ -96,9 +100,7 @@ namespace Luminance.ViewModels
                 string authenticationResult = authService.LoginWithPassword(userName, password);
 
                 if (EvaluateAuthenticationResult(authenticationResult))
-                {
-                    //TODO: Switch to Home View.
-                }
+                    LoginSucceeded?.Invoke(); //Switch to Home View.
             }
             catch
             {
@@ -115,9 +117,7 @@ namespace Luminance.ViewModels
                 string authenticationResult = authService.LoginWithPassword(userName, recoveryKey);
 
                 if (EvaluateAuthenticationResult(authenticationResult))
-                {
-                    //TODO: Switch to Home View.
-                }
+                    LoginSucceeded?.Invoke(); //Switch to Home View.
             }
             catch
             {

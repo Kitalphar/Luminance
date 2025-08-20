@@ -17,12 +17,6 @@ namespace Luminance
             // Initialize the database service
             AppDatabaseService.Initialize(connectionString);
 
-            //MainWindow mainWindow = new MainWindow();
-            //MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
-
-            //mainWindow.DataContext = mainWindowViewModel;
-            //mainWindow.ShowDialog();
-
             //UI thread exceptions
             this.DispatcherUnhandledException += (s, e) =>
             {
@@ -50,22 +44,6 @@ namespace Luminance
 
             startupWindow.DataContext = startupWindowViewModel;
             startupWindow.ShowDialog();
-
-
-            /*
-            // Check if the user is authenticated (you could store this in the ViewModel)
-            if (loginViewModel.IsAuthenticated)
-            {
-                // Once login is successful, show the main window
-                var mainWindow = new MainWindow();
-                mainWindow.Show();
-            }
-            else
-            {
-                // If authentication fails, exit the application
-                Application.Current.Shutdown();
-            }
-            */
         }
 
         private void HandleFatalError(Exception ex)

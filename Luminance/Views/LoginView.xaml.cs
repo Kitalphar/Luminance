@@ -11,7 +11,7 @@ namespace Luminance.Views
         public LoginView()
         {
             InitializeComponent();
-            this.DataContext = new LoginViewModel();
+            //this.DataContext = new LoginViewModel();
         }
     }
 }

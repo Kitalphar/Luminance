@@ -5,10 +5,10 @@
              xmlns:view="clr-namespace:Luminance.Views"
              xmlns:viewModel="clr-namespace:Luminance.ViewModels"
              Startup="Application_Startup"
+             ShutdownMode="OnExplicitShutdown"
              >
     <Application.Resources>
 
-        <!--<local:ViewModelLocator x:Key="Locator"/>-->
 
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

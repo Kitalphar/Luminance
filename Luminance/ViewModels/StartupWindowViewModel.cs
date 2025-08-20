@@ -15,8 +15,8 @@ namespace Luminance.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 
-        private object _currentViewModel;
-        public object CurrentViewModel
+        private object? _currentViewModel;
+        public object? CurrentViewModel
         {
             get => _currentViewModel;
             set
@@ -31,7 +31,30 @@ namespace Luminance.ViewModels
         {
             CloseButtonCommand = new RelayCommand(CloseApplication);
 
-            CurrentViewModel = new LoginViewModel();
+            var loginViewModel = new LoginViewModel();
+            loginViewModel.LoginSucceeded += OnLoginSuccess;
+
+            CurrentViewModel = loginViewModel;
+
+            //System.Diagnostics.Debug.WriteLine("CurrentViewModel set: " + (CurrentViewModel != null));
+        }
+
+        private void OnLoginSuccess()
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+                var mainWindow = new MainWindow();
+                Application.Current.MainWindow = mainWindow;
+                mainWindow.Show();
+
+                //Cloose the StartupWindow
+                Application.Current.Windows
+                    .OfType<Window>()
+                    .FirstOrDefault(w => w is StartupWindow)
+                    ?.Close();
+            });
         }
 
         private void CloseApplication()
