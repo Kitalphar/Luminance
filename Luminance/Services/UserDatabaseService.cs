@@ -1,4 +1,7 @@
-﻿using System.Data.SQLite;
+﻿using Microsoft.Data.Sqlite;
+using System.Threading.Channels;
+using System.Windows.Documents;
+using Luminance.Helpers;
 
 namespace Luminance.Services
 {
@@ -17,18 +20,34 @@ namespace Luminance.Services
         {
             if (_instance == null)
                 _instance = new UserDatabaseService(connectionString);
+
+            //Initialize SqlCipher
+            SQLitePCL.Batteries_V2.Init();
         }
 
         public static UserDatabaseService Instance =>
             _instance ?? throw new InvalidOperationException("ERR_SERVICE_NOT_INITIALIZED(10)");
 
-        internal static SQLiteConnection OpenConnection()
+        internal static SqliteConnection OpenConnection()
         {
             if (!IsAccessAllowed)
                 throw new InvalidOperationException("ERR_DATABASE_ACCESS_DENIED(220)");
 
-            var conn = new SQLiteConnection(Instance.ConnectionString);
+            var userKey = GetUserKey();
+
+            var conn = new SqliteConnection(Instance.ConnectionString);
             conn.Open();
+
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"PRAGMA key = '{userKey}';";
+                cmd.ExecuteNonQuery();
+
+                cmd.Parameters.Clear();
+                cmd.CommandText = "PRAGMA foreign_keys = ON;";
+                cmd.ExecuteNonQuery();
+            }
+
             return conn;
         }
 
@@ -40,12 +59,49 @@ namespace Luminance.Services
 
         public void DecryptDatabase()
         {
-            //logic to decrypt the DB file here
+            using var conn = new SqliteConnection(ConnectionString);
+            conn.Open();
+
+            var userKey = GetUserKey();
+
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = $"PRAGMA key = '{userKey}';";
+                cmd.ExecuteNonQuery();
+            }
+
+            // Test a simple query to ensure the key works (throws if invalid)
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = "PRAGMA schema_version;";
+                cmd.ExecuteScalar();
+            }
         }
 
+
+        //No-op with SQLCipher (DB always encrypted at rest).
+        //Could be used for PRAGMA rekey if password changes.
         public void EncryptDatabase()
         {
-            //logic to encrypt the DB file here
+            // Intentionally left blank.
+        }
+
+        private static string GetUserKey()
+        {
+            var userKey = AppSettings.Instance.Get("userKey");
+
+            if (string.IsNullOrWhiteSpace(userKey))
+                throw new InvalidOperationException("ERR_USERKEY_NOT_AVAILABLE(221)");
+
+            return userKey;
+        }
+
+        public void RekeyDatabase(string newKey)
+        {
+            using var conn = OpenConnection();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = $"PRAGMA rekey = '{newKey}';";
+            cmd.ExecuteNonQuery();
         }
     }
 }

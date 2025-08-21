@@ -1,4 +1,4 @@
-﻿using System.Data.SQLite;
+﻿using Microsoft.Data.Sqlite;
 using System.IO;
 using System.Windows;
 using Luminance.Helpers;
@@ -19,7 +19,6 @@ namespace Luminance.Services
                 if (UserExists(userNameHash))
                     throw new InvalidOperationException("ERR_USERNAME_TAKEN(204)");
 
-
                 string passwordSalt = cryptoService.GeneratePasswordSalt();
                 string recoveryKey = cryptoService.GenerateRecoveryKey();
 
@@ -28,6 +27,9 @@ namespace Luminance.Services
 
                 //Encrypt userKey with the RecoveryKey to allow for password recovery.
                 string encryptedUserKey = cryptoService.GenerateEncryptedUserKey(userKey, recoveryKey);
+
+                //Storing userKey early for SqlCipher
+                AppSettings.Instance.Set("userKey", userKey);
 
                 //Create a per-user Database.
                 string dbName = String.Concat(cryptoService.ObfuscateDatabaseName(userName), ".db");
@@ -38,9 +40,9 @@ namespace Luminance.Services
                 {
                     //const string createUser = "INSERT INTO accounts (user_name,user_db,pw_salt,user_key) VALUES (@username,@dbname,@pwsalt,@userkey)";
 
-                    using var command1 = new SQLiteCommand();
+                    using var command1 = new SqliteCommand();
 
-                    using var command = new SQLiteCommand(SqlQueryHelper.createUserQueryString, conn);
+                    using var command = new SqliteCommand(SqlQueryHelper.createUserQueryString, conn);
                     command.Parameters.AddWithValue(SqlQueryHelper.usernameParam, userNameHash);
                     command.Parameters.AddWithValue(SqlQueryHelper.userDbParam, dbName);
                     command.Parameters.AddWithValue(SqlQueryHelper.passwordSaltParam, passwordSalt);
@@ -56,13 +58,12 @@ namespace Luminance.Services
                 SecureUserDbQueryCoordinator.RunQuery(conn =>
                 {
 
-                    using var command = new SQLiteCommand(SqlQueryHelper.insertFieldKeyQueryString, conn);
+                    using var command = new SqliteCommand(SqlQueryHelper.insertFieldKeyQueryString, conn);
                     command.Parameters.AddWithValue(SqlQueryHelper.userFieldKeyParam, encryptedFieldKey);
 
                     command.ExecuteNonQuery();
                 });
-
-                AppSettings.Instance.Set("userKey", userKey);
+                
                 AppSettings.Instance.Set("fieldKey", fieldKey);
 
                 // TEMPORARY MESSAGEBOX, REMOVE LATER.
@@ -86,7 +87,7 @@ namespace Luminance.Services
         {
             return AppDbQueryCoordinator.RunQuery(conn =>
             {
-                using var command = new SQLiteCommand(SqlQueryHelper.userExistQueryString, conn);
+                using var command = new SqliteCommand(SqlQueryHelper.userExistQueryString, conn);
                 command.Parameters.AddWithValue(SqlQueryHelper.usernameParam, userName);
 
                 using var reader = command.ExecuteReader();
@@ -107,21 +108,21 @@ namespace Luminance.Services
                 if (File.Exists(dbFile))
                     throw new IOException("ERR_IO_DB_FILE_EXISTS(701)");
 
-                SQLiteConnection.CreateFile(dbFile);
+                //SQLiteConnection.CreateFile(dbFile);
+
+                string userKey = AppSettings.Instance.Get("userKey");
+                if (string.IsNullOrEmpty(userKey))
+                    throw new InvalidOperationException("ERR_USERKEY_NOT_AVAILABLE(221)");
+
+                //Connect to User's database file & initialize SqlCipher
+                //string connectionString = $"Data Source={dbFile};Version=3;";
+                string connectionString = $"Data Source={dbFile};";
+                UserDatabaseService.Initialize(connectionString);
+
+                CreateDbFileWithSqlCipher(userKey, dbFile);
 
                 //Get CREATE TABLE scripts from App.db
                 var createTableQueries = GetDbScriptsFromAppDb(SqlQueryHelper.createTableQueryString);
-
-                //Connect to User's database file.
-                string connectionString = $"Data Source={dbFile};Version=3;";
-                UserDatabaseService.Initialize(connectionString);
-
-                //Enable WAL mode for future queries.
-                SecureUserDbQueryCoordinator.RunQuery(userConn => 
-                {
-                    using (var cmd = new SQLiteCommand("PRAGMA journal_mode=WAL;", userConn))
-                        cmd.ExecuteNonQuery();
-                });
 
                 //Create default tables in the user's database file.
                 ExecuteUserDbScripts(createTableQueries);
@@ -145,13 +146,35 @@ namespace Luminance.Services
             }
         }
 
+        private static void CreateDbFileWithSqlCipher(string userKey, string dbFile)
+        {
+
+            using var conn = new SqliteConnection($"Data Source={dbFile};Mode=ReadWriteCreate;");
+            conn.Open();
+
+
+            using (var cmd = conn.CreateCommand())
+            {
+                // Set the key BEFORE any other SQL
+                cmd.CommandText = $"PRAGMA key = '{userKey}';";
+                cmd.ExecuteNonQuery();
+            }
+
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = "PRAGMA journal_mode=WAL;";
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+
         private static List<string> GetDbScriptsFromAppDb(string queryString)
         {
             var queryList = new List<string>();
 
             AppDbQueryCoordinator.RunQuery(appConn =>
             {
-                using var command = new SQLiteCommand(queryString, appConn);
+                using var command = new SqliteCommand(queryString, appConn);
                 using var reader = command.ExecuteReader();
 
                 while (reader.Read())
@@ -169,7 +192,7 @@ namespace Luminance.Services
             {
                 foreach (var queryScript in queryScripts)
                 {
-                    using var createCmd = new SQLiteCommand(queryScript, userConn);
+                    using var createCmd = new SqliteCommand(queryScript, userConn);
                     createCmd.ExecuteNonQuery();
                 }
             });
@@ -198,7 +221,11 @@ namespace Luminance.Services
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.idParam, dict[SqlQueryHelper.categoriesTableIdColumn]);
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.nameParam, dict[SqlQueryHelper.categoriesTableENNameColumn]);
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.typeParam, dict[SqlQueryHelper.categoriesTableTypeColumn]);
-                                cmd.Parameters.AddWithValue(SqlQueryHelper.categoriesTableParentIdParam, dict[SqlQueryHelper.categoriesTableParentIdColumn]);
+
+                                //This is because i had Microsoft.Data.Sql is strict about datatypes.
+                                var parentIdRaw = dict[SqlQueryHelper.categoriesTableParentIdColumn]?.ToString();
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.categoriesTableParentIdParam,string.IsNullOrEmpty(parentIdRaw) ? DBNull.Value : (object)parentIdRaw);
+                                //cmd.Parameters.AddWithValue(SqlQueryHelper.categoriesTableParentIdParam, dict[SqlQueryHelper.categoriesTableParentIdColumn]);
                                 break;
                             case "currencies":
                                 cmd.CommandText = SqlQueryHelper.insertDefaultCurrenciesQueryString;

@@ -1,4 +1,4 @@
-﻿using System.Data.SQLite;
+﻿using Microsoft.Data.Sqlite;
 
 namespace Luminance.Services
 {
@@ -15,6 +15,7 @@ namespace Luminance.Services
                 {
                     UserDatabaseService.Instance.DecryptDatabase();
                     UserDatabaseService.AllowAccess();
+
                 }
 
                 _activeQuerySessions++;
@@ -30,12 +31,12 @@ namespace Luminance.Services
                 if (_activeQuerySessions == 0)
                 {
                     UserDatabaseService.DenyAccess();
-                    UserDatabaseService.Instance.EncryptDatabase();
+                    //UserDatabaseService.Instance.EncryptDatabase();
                 }
             }
         }
 
-        public static void RunQueriesInParallel(IEnumerable<Action<SQLiteConnection>> queryActions)
+        public static void RunQueriesInParallel(IEnumerable<Action<SqliteConnection>> queryActions)
         {
             StartSecureSession();
             try
@@ -52,7 +53,7 @@ namespace Luminance.Services
             }
         }
 
-        public static void RunQueriesInParallel(IEnumerable<Func<SQLiteConnection, Task>> queryTasks)
+        public static void RunQueriesInParallel(IEnumerable<Func<SqliteConnection, Task>> queryTasks)
         {
             StartSecureSession();
             try
@@ -71,7 +72,7 @@ namespace Luminance.Services
             }
         }
 
-        public static void RunQuery(Action<SQLiteConnection> queryAction)
+        public static void RunQuery(Action<SqliteConnection> queryAction)
         {
             StartSecureSession();
             try
@@ -85,7 +86,7 @@ namespace Luminance.Services
             }
         }
 
-        public static T RunQuery<T>(Func<SQLiteConnection, T> queryFunc)
+        public static T RunQuery<T>(Func<SqliteConnection, T> queryFunc)
         {
             StartSecureSession();
             try
@@ -99,7 +100,7 @@ namespace Luminance.Services
             }
         }
 
-        public static async Task RunQueryAsync(Func<SQLiteConnection, Task> queryFunc)
+        public static async Task RunQueryAsync(Func<SqliteConnection, Task> queryFunc)
         {
             StartSecureSession();
             try
@@ -114,7 +115,7 @@ namespace Luminance.Services
         }
 
 
-        public static void RunTransaction(Action<SQLiteConnection> transactionAction)
+        public static void RunTransaction(Action<SqliteConnection> transactionAction)
         {
             StartSecureSession();
             try

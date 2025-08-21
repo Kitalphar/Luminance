@@ -64,13 +64,11 @@ namespace Luminance.Helpers
             return $"SELECT {column} FROM {appAccountsDataTable} WHERE user_name = {usernameParam}";
         }
 
-
-        //public string BuildCreateTableLookUpQuery()
-        //{
-        //    string queryString = "SELECT script_content FROM db_scripts WHERE type = 'create_table' ORDER BY script_id ASC";
-
-
-        //    return queryString ;
-        //}
+        object NormalizeDbValue(object value)
+        {
+            if (value == null) return DBNull.Value;
+            if (value is string s && string.IsNullOrWhiteSpace(s)) return DBNull.Value;
+            return value;
+        }
     }
 }

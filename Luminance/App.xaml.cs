@@ -12,9 +12,10 @@ namespace Luminance
         {
             string basePath = AppDomain.CurrentDomain.BaseDirectory;
             string dbPath = Path.Combine(basePath, "App.db");
-            string connectionString = $"Data Source={dbPath};Version=3;";
+            //string connectionString = $"Data Source={dbPath};Version=3;";
+            string connectionString = $"Data Source={dbPath};";
 
-            // Initialize the database service
+            // Initialize the App database service
             AppDatabaseService.Initialize(connectionString);
 
             //UI thread exceptions
@@ -37,7 +38,6 @@ namespace Luminance
                 HandleFatalError(e.Exception);
                 e.SetObserved();
             };
-
 
             StartupWindow startupWindow = new StartupWindow();
             StartupWindowViewModel startupWindowViewModel = new StartupWindowViewModel(); 

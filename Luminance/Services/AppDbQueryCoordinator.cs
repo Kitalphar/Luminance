@@ -1,10 +1,10 @@
-﻿using System.Data.SQLite;
+﻿using Microsoft.Data.Sqlite;
 
 namespace Luminance.Services
 {
     public static class AppDbQueryCoordinator
     {
-        public static void RunQueriesInParallel(IEnumerable<Action<SQLiteConnection>> queryActions)
+        public static void RunQueriesInParallel(IEnumerable<Action<SqliteConnection>> queryActions)
         {
             Parallel.ForEach(queryActions, queryAction =>
             {
@@ -13,7 +13,7 @@ namespace Luminance.Services
             });
         }
 
-        public static void RunQueriesInParallel(IEnumerable<Func<SQLiteConnection, Task>> queryTasks)
+        public static void RunQueriesInParallel(IEnumerable<Func<SqliteConnection, Task>> queryTasks)
         {
             var tasks = queryTasks.Select(async queryTask =>
             {
@@ -24,20 +24,20 @@ namespace Luminance.Services
             Task.WaitAll(tasks.ToArray());
         }
 
-        public static void RunQuery(Action<SQLiteConnection> queryAction)
+        public static void RunQuery(Action<SqliteConnection> queryAction)
         {
             using var conn = AppDatabaseService.OpenConnection();
             queryAction(conn);
         }
 
-        public static T RunQuery<T>(Func<SQLiteConnection, T> queryFunc)
+        public static T RunQuery<T>(Func<SqliteConnection, T> queryFunc)
         {
             using var conn = AppDatabaseService.OpenConnection();
             return queryFunc(conn);
         }
 
 
-        public static async Task RunQueryAsync(Func<SQLiteConnection, Task> queryFunc)
+        public static async Task RunQueryAsync(Func<SqliteConnection, Task> queryFunc)
         {
             using var conn = AppDatabaseService.OpenConnection();
             await queryFunc(conn);

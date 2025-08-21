@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.IO;
 using Luminance.Helpers;
 
@@ -23,6 +23,9 @@ namespace Luminance.Services
             //Encrypt password.
             string userKey = FindUserkey(userNameHash, password, false);
 
+            //Storing userKey early for SqlCipher
+            AppSettings.Instance.Set("userKey", userKey);
+
             InitializeDatabaseConnection(dbName);
 
             //Query fieldKey. If decryption on the database file fails, the
@@ -33,8 +36,6 @@ namespace Luminance.Services
             string fieldKey = ReturnDecryptedFieldKey(encryptedFieldKey, userKey);
 
             AppSettings.Instance.Set("fieldKey", fieldKey);
-            AppSettings.Instance.Set("userKey", userKey);
-
 
             return AuthenticationStatus.Success.ToString();
         }
@@ -48,6 +49,9 @@ namespace Luminance.Services
             //Query encrypted userKey from App.db, and decrypt it with recoveryKey
             string userKey = FindUserkey(userNameHash, recoveryKey, true);
 
+            //Storing userkey early for SqlCipher
+            AppSettings.Instance.Set("userKey", userKey);
+
             InitializeDatabaseConnection(dbName);
 
             //Query fieldKey. If decryption on the database file fails, the
@@ -58,8 +62,7 @@ namespace Luminance.Services
             string fieldKey = ReturnDecryptedFieldKey(encryptedFieldKey, userKey);
 
             AppSettings.Instance.Set("fieldKey", fieldKey);
-            AppSettings.Instance.Set("userKey", userKey);
-
+            
             return AuthenticationStatus.Success.ToString();
         }
 
@@ -68,7 +71,7 @@ namespace Luminance.Services
             string dataFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
             string dbFile = Path.Combine(dataFolder, dbName);
 
-            string connectionString = $"Data Source={dbFile};Version=3;";
+            string connectionString = $"Data Source={dbFile};";
             UserDatabaseService.Initialize(connectionString);
 
             AppSettings.Instance.Set("userDbLocation", dbFile);
@@ -79,7 +82,7 @@ namespace Luminance.Services
         {
             return AppDbQueryCoordinator.RunQuery(conn =>
             {
-                using var command = new SQLiteCommand(SqlQueryHelper.userExistQueryString, conn);
+                using var command = new SqliteCommand(SqlQueryHelper.userExistQueryString, conn);
                 command.Parameters.AddWithValue(SqlQueryHelper.usernameParam, userName);
 
                 using var reader = command.ExecuteReader();
@@ -131,7 +134,7 @@ namespace Luminance.Services
 
             AppDbQueryCoordinator.RunQuery(conn =>
             {
-                using var command = new SQLiteCommand(queryString, conn);
+                using var command = new SqliteCommand(queryString, conn);
                 command.Parameters.AddWithValue(SqlQueryHelper.usernameParam, filterValue);
 
                 using var reader = command.ExecuteReader();
@@ -150,7 +153,7 @@ namespace Luminance.Services
 
             SecureUserDbQueryCoordinator.RunQuery(conn =>
             {
-                using var command = new SQLiteCommand(SqlQueryHelper.findFieldKeyQueryString, conn);
+                using var command = new SqliteCommand(SqlQueryHelper.findFieldKeyQueryString, conn);
                 using var reader = command.ExecuteReader();
 
                 while (reader.Read())

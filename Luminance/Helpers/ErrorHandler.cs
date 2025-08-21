@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.Windows;
 using Luminance.Services;
 
@@ -23,8 +23,8 @@ namespace Luminance.Helpers
             int parenthesisStart = errorCodeAndId.IndexOf('(');
             int parenthesisEnd = errorCodeAndId.IndexOf(')');
 
-            if (errorCodeAndId.StartsWith("ERR_CODE_"))
-                return UnknownError;
+            //if (errorCodeAndId.StartsWith("ERR_CODE_"))
+            //    return UnknownError;
 
             if (parenthesisStart == -1 || parenthesisEnd == -1 || parenthesisEnd <= parenthesisStart)
                 throw new InvalidOperationException("ERR_CODE_FORMAT_INVALID(401)");
@@ -70,11 +70,11 @@ namespace Luminance.Helpers
             return errorMessage ?? UnknownError;
         }
 
-        private static string? ErrorMessageQuery(SQLiteConnection conn, string langColumn, string column, string value, bool tryFallBack)
+        private static string? ErrorMessageQuery(SqliteConnection conn, string langColumn, string column, string value, bool tryFallBack)
         {
             string sql = $"SELECT {langColumn} FROM error_messages WHERE {column} = @value;";
 
-            using var command = new SQLiteCommand(sql, conn);
+            using var command = new SqliteCommand(sql, conn);
             command.Parameters.AddWithValue("@value", value);
 
             using var reader = command.ExecuteReader();
