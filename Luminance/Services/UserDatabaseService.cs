@@ -78,7 +78,6 @@ namespace Luminance.Services
             }
         }
 
-
         //No-op with SQLCipher (DB always encrypted at rest).
         //Could be used for PRAGMA rekey if password changes.
         public void EncryptDatabase()

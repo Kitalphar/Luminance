@@ -1,16 +1,21 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Themes/Design.xaml"/>
-    </ResourceDictionary.MergedDictionaries>
-
-    <Color x:Key="PrimaryTextColor">White</Color>
-    <Color x:Key="InputBackground">#333333</Color>
-    <Color x:Key="InputBorder">#666666</Color>
-
-    <SolidColorBrush x:Key="PrimaryTextColorBrush" Color="{StaticResource PrimaryTextColor}" />
-    <SolidColorBrush x:Key="InputBackgroundBrush" Color="{StaticResource InputBackground}" />
-    <SolidColorBrush x:Key="InputBorderBrush" Color="{StaticResource InputBorder}" />
+    <!--Background Color Brushes-->
+    <SolidColorBrush x:Key="PrimaryAppBgColor" Color="{DynamicResource DarkBlue-900}"/>
+    <SolidColorBrush x:Key="SecondaryAppBgColor" Color="{DynamicResource DarkBlue-800}"/>
     
+    <!--Border Brushes-->
+    <SolidColorBrush x:Key="PrimaryAppBorderColor" Color="{DynamicResource Grey-200}"/>
+
+    <!--Text Color Brushes-->
+    <SolidColorBrush x:Key="PrimaryTextColor" Color="{DynamicResource Grey-200}"/>
+    <SolidColorBrush x:Key="SecondaryTextColor" Color="{DynamicResource Grey-300}"/>
+
+    <!--Window Control Button Brush-->
+    <SolidColorBrush x:Key="WindowControlButtonColor" Color="{DynamicResource White-200}"/>
+
+    <!--Button Highlight Color Brushes-->
+    <SolidColorBrush x:Key="MenuButtonActiveStateColor" Color="{DynamicResource LightBlue-200}"/>
+
 </ResourceDictionary>

@@ -57,14 +57,10 @@ namespace Luminance
         {
             base.OnExit(e);
 
-            // Clean up database services
-            /*AppDatabaseService.Instance?.Dispose();*/
-            //UserDatabaseService.Instance?.Dispose();
-
-            //EncryptedDatabaseService.Instance?.EncryptAndDispose();
-
+            /* This was supposed to be a a place to ensure database is encrypted
+             * In case user exits while the database file is decrypted, but
+             * apparently SQLCipher ensures encryption at rest so....it is not needed.
+             * .... probably */
         }
-
     }
-
 }

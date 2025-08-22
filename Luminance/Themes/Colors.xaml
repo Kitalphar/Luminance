@@ -1,14 +1,19 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!--Centralised file housing all base color options-->
+    <!--Brushes are housed in the respective theme files--> 
+    
     <!-- Base colors -->
-    <Color x:Key="Color.Primary">#4A90E2</Color>
-    <Color x:Key="Color.Text">#111</Color>
-    <Color x:Key="Color.Background">#FFF</Color>
+    <Color x:Key="White-200">white</Color>
+    
+    <Color x:Key="Grey-200">#E6F0F7</Color>
+    <Color x:Key="Grey-300">#9AA8B7</Color>
 
-    <!-- Brushes -->
-    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Color.Primary}" />
-    <SolidColorBrush x:Key="TextBrush" Color="{StaticResource Color.Text}" />
-    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource Color.Background}" />
+    <Color x:Key="LightBlue-200">#2D8EFF</Color>
+    
+    <Color x:Key="DarkBlue-800">#040D18</Color>
+    <Color x:Key="DarkBlue-900">#00080E</Color>
 
-</ResourceDictionary>
+
+</ResourceDictionary> 

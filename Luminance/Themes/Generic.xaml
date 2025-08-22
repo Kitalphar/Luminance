@@ -2,13 +2,77 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:Luminance.Controls">
 
+    <!--This file is for standard control settings-->
+    
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="/Themes/Design.xaml"/>
         <ResourceDictionary Source="/Themes/Controls.xaml"/>
+        <ResourceDictionary Source="/Themes/Design.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
+    
+    <!--Window Control Buttons-->
+    <Style x:Key="BaseWindowControlButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
+        <Setter Property="FontWeight" Value="ExtraBold"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="{DynamicResource WindowControlButtonColor}"/>
+    </Style>
 
-    <Style TargetType="{x:Type local:CustomTextBox}">
+    <Style x:Key="MinimizeWindowControlButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseWindowControlButtonStyle}">
+        <Setter Property="Content" Value="&#xE921;"/>
+    </Style>
+
+    <Style x:Key="MaximizeWindowControlButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseWindowControlButtonStyle}">
+        <Setter Property="Content" Value="&#xE923;"/>
+    </Style>
+
+    <Style x:Key="CloseWindowControlButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseWindowControlButtonStyle}">
+        <Setter Property="Content" Value="&#xE7E8;"/>
+    </Style>
+
+    <!--Radio Buttons-->
+    <Style
+    BasedOn="{StaticResource {x:Type ToggleButton}}"
+    TargetType="{x:Type RadioButton}"
+    x:Key="MenuButtonTheme"
+    >
+        <Style.Setters>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid VerticalAlignment="Stretch"
+                          HorizontalAlignment="Stretch"
+                          Background="{TemplateBinding Background}">
+
+                            <TextBlock Text="{TemplateBinding Property=Content}"
+                                   VerticalAlignment="Center"
+                                   Margin="50, 0, 0, 0"
+                                   />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style.Setters>
+
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="{DynamicResource MenuButtonActiveStateColor}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <!--<Style TargetType="{x:Type local:CustomTextBox}">
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}" />
         <Setter Property="Background" Value="{DynamicResource InputBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource InputBorder}" />
@@ -25,7 +89,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 
 </ResourceDictionary>
     

@@ -7,13 +7,8 @@
         xmlns:views="clr-namespace:Luminance.Views"
         xmlns:vm="clr-namespace:Luminance.ViewModels" d:DataContext="{d:DesignInstance Type=vm:StartupWindowViewModel}"
         mc:Ignorable="d"
-        Title="StartupWindow"
-        Height="400"
-        Width="500"
-        AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        Background="Transparent"
+        Style="{DynamicResource StartupWindowDesignStyle}"
         >
 
     <Window.Resources>
@@ -24,7 +19,7 @@
 
 
     <Grid>
-        <Border Background="#212529" CornerRadius="12"/>
+        <Border Style="{DynamicResource StartupWindowBorderStyle}"/>
 
         <Grid>
             <Grid.RowDefinitions>
@@ -33,22 +28,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Button Width="20"
-                    Height="20"
-                    Content="X"
+            <Button Style="{DynamicResource CloseWindowControlButtonStyle}"
                     HorizontalAlignment="Right"
                     Margin="0,0,20,0"
                     Command="{Binding CloseButtonCommand}"/>
 
-            <TextBlock Text="Luminance"
-                       Foreground="white"
-                       FontSize="24"
-                       TextAlignment="Center"
-                       VerticalAlignment="Center"
-                       Grid.Row="1"/>
+            <TextBlock Style="{DynamicResource LoginWindowTitleStyle}" Grid.Row="1"/>
 
-            <ContentControl Content="{Binding CurrentViewModel}"
-                            Grid.Row="2"/>
+            <ContentControl Content="{Binding CurrentViewModel}" Grid.Row="2"/>
         </Grid>
         
     </Grid>

@@ -7,17 +7,9 @@
         xmlns:views="clr-namespace:Luminance.Views"
         xmlns:vm="clr-namespace:Luminance.ViewModels" d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow"
-        Height="720"
-        Width="1200"
-        AllowsTransparency="True"
         WindowStartupLocation="CenterScreen"
-        WindowStyle="None"
-        Background="Transparent"
-        >
-
+        Style="{DynamicResource MainWindowStyleDesignStyle}">
     
-
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <views:LoginView />
@@ -25,73 +17,71 @@
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">
             <views:HomeView />
         </DataTemplate>
-    </Window.Resources>    
-    
-    
-    
-    <Grid>
-        <Border Background="#212529" CornerRadius="12"/>
+    </Window.Resources>
+
+    <Grid >
         <ContentControl Content="{Binding CurrentViewModel}" />
 
-        <Grid>
+        <Grid Panel.ZIndex="1" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-
+            
+            <!--Apparently i need to color borders and not controls if i want it to behave like i want it to.-->
+            
+            <!--Outer border radius-->
+            <Border Style="{DynamicResource MainWindowOuterBorderStyle}"/>
+            <!--Header border radius-->
+            <Border Style="{DynamicResource MainWindowHeaderBorderStyle}"/>
+            <!--Inner border radius-->
+            <Border Style="{DynamicResource MainWindowInnerBorderStyle}"/>
+            
             <Button
-                Content="X"
+                Style="{DynamicResource CloseWindowControlButtonStyle}"
                 Command="{Binding CloseButtonCommand}"
-                Width="18"
-                Height="18"
                 Grid.Row="0"
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 Margin="0,0,30,0"
                 />
             <Button
-                Content="O"
+                Style="{DynamicResource MaximizeWindowControlButtonStyle}"
                 Command="{Binding MaximizeWindowCommand}"
-                Width="18"
-                Height="18"
                 Grid.Row="0"
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 Margin="0,0,60,0"
                 />
             <Button
-                Content="_"
+                Style="{DynamicResource MinimizeWindowControlButtonStyle}"
                 Command="{Binding MinimizeWindowCommand}"
-                Width="18"
-                Height="18"
                 Grid.Row="0"
                 Grid.Column="1"
                 HorizontalAlignment="Right"
                 Margin="0,0,90,0"
                 />
 
-            <StackPanel Grid.Row="1">
+            <StackPanel 
+                Grid.Row="1" 
+                Grid.Column="0" 
+                >
+
                 <RadioButton
                     Content="Home"
-                    Height="50"
-                    Foreground="White"
-                    FontSize="14"
                     Style="{StaticResource MenuButtonTheme}"
                     />
 
                 <RadioButton
                     Content="Discovery"
-                    Height="50"
-                    Foreground="White"
-                    FontSize="14"
                     Style="{StaticResource MenuButtonTheme}"
-                    />  
+                    />
             </StackPanel>
 
             <ContentControl

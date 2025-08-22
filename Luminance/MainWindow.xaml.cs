@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Media;
 using Luminance.ViewModels;
 
 namespace Luminance
@@ -12,6 +13,8 @@ namespace Luminance
         {
             InitializeComponent();
             //this.DataContext = new MainWindowViewModel();
+
         }
+      
     }
 }
