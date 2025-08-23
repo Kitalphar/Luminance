@@ -1,7 +1,7 @@
 ﻿using System.Data;
-using Microsoft.Data.Sqlite;
 using System.IO;
 using Luminance.Helpers;
+using Microsoft.Data.Sqlite;
 
 namespace Luminance.Services
 {
@@ -10,8 +10,8 @@ namespace Luminance.Services
         private enum AuthenticationStatus
         {
             Success,
-            AuthenticationFailed,
-            UnknownError
+            FieldKeyMissing
+            //Maybe one day this will have more purpose ....
         }
 
         public string LoginWithPassword(string userName, string password)
@@ -26,11 +26,14 @@ namespace Luminance.Services
             //Storing userKey early for SqlCipher
             AppSettings.Instance.Set("userKey", userKey);
 
+            //If decryption on the database file fails, the Authentication fails.
             InitializeDatabaseConnection(dbName);
 
-            //Query fieldKey. If decryption on the database file fails, the
-            //Authentication fails.
+            //Query fieldKey. 
             string encryptedFieldKey = RunFieldKeyQuery();
+
+            if (string.IsNullOrWhiteSpace(encryptedFieldKey))
+                return AuthenticationStatus.FieldKeyMissing.ToString();
 
             //decrypt fieldkey
             string fieldKey = ReturnDecryptedFieldKey(encryptedFieldKey, userKey);
@@ -52,11 +55,14 @@ namespace Luminance.Services
             //Storing userkey early for SqlCipher
             AppSettings.Instance.Set("userKey", userKey);
 
+            //If decryption on the database file fails, the Authentication fails.
             InitializeDatabaseConnection(dbName);
 
-            //Query fieldKey. If decryption on the database file fails, the
-            //Authentication fails.
+            //Query fieldKey. 
             string encryptedFieldKey = RunFieldKeyQuery();
+
+            if (string.IsNullOrWhiteSpace(encryptedFieldKey))
+                return AuthenticationStatus.FieldKeyMissing.ToString();
 
             //decrypt fieldkey
             string fieldKey = ReturnDecryptedFieldKey(encryptedFieldKey, userKey);
@@ -149,7 +155,7 @@ namespace Luminance.Services
 
         private static string RunFieldKeyQuery()
         {
-            string encryptedFieldKey = string.Empty;
+            string? encryptedFieldKey = null;
 
             SecureUserDbQueryCoordinator.RunQuery(conn =>
             {
@@ -162,7 +168,7 @@ namespace Luminance.Services
                 }
             });
 
-            return encryptedFieldKey;
+            return encryptedFieldKey!;
         }
 
         private static string ReturnDecryptedFieldKey(string encryptedFieldKey, string userKey)

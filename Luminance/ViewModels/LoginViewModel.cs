@@ -100,7 +100,7 @@ namespace Luminance.ViewModels
                 string authenticationResult = authService.LoginWithPassword(userName, password);
 
                 if (EvaluateAuthenticationResult(authenticationResult))
-                    LoginSucceeded?.Invoke(); //Switch to Home View.
+                    LoginSucceeded?.Invoke(); //Switch to MainWindow.
             }
             catch
             {
@@ -117,7 +117,7 @@ namespace Luminance.ViewModels
                 string authenticationResult = authService.LoginWithPassword(userName, recoveryKey);
 
                 if (EvaluateAuthenticationResult(authenticationResult))
-                    LoginSucceeded?.Invoke(); //Switch to Home View.
+                    LoginSucceeded?.Invoke(); //Switch to MainWindow.
             }
             catch
             {
@@ -132,14 +132,11 @@ namespace Luminance.ViewModels
                 case "Success":
                     return true;
 
-                case "AuthenticationFailed":
-                    throw new UnauthorizedAccessException("Authentication failed. Invalid key or credentials.");
-
-                case "UnknownError":
-                    throw new CryptographicException("An unknown error occurred during authentication.");
+                case "FieldKeyMissing":
+                    throw new UnauthorizedAccessException("ERR_NO_DATA(502)");
 
                 default:
-                    throw new InvalidOperationException($"Unexpected authentication result: {authenticationResult}");
+                    throw new InvalidOperationException("ERR_UNKNOWN(801)");
             }
         }
 

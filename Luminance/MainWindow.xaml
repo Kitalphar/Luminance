@@ -11,17 +11,12 @@
         Style="{DynamicResource MainWindowStyleDesignStyle}">
     
     <Window.Resources>
-        <DataTemplate DataType="{x:Type vm:LoginViewModel}">
-            <views:LoginView />
-        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:HomeViewModel}">
             <views:HomeView />
         </DataTemplate>
     </Window.Resources>
 
     <Grid >
-        <ContentControl Content="{Binding CurrentViewModel}" />
-
         <Grid Panel.ZIndex="1" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
@@ -68,26 +63,21 @@
                 Margin="0,0,90,0"
                 />
 
-            <StackPanel 
-                Grid.Row="1" 
-                Grid.Column="0" 
-                >
+            <StackPanel Grid.Row="1" Grid.Column="0" >
 
                 <RadioButton
                     Content="Home"
-                    Style="{StaticResource MenuButtonTheme}"
-                    />
+                    Style="{StaticResource MenuButtonTheme}"/>
 
                 <RadioButton
                     Content="Discovery"
-                    Style="{StaticResource MenuButtonTheme}"
-                    />
+                    Style="{StaticResource MenuButtonTheme}"/>
             </StackPanel>
 
             <ContentControl
+                Content="{Binding CurrentViewModel}"
                 Grid.Row="1"
                 Grid.Column="1"
-                Margin="10"
                 />
 
         </Grid>

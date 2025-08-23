@@ -15,7 +15,6 @@ namespace Luminance.Services
                 {
                     UserDatabaseService.Instance.DecryptDatabase();
                     UserDatabaseService.AllowAccess();
-
                 }
 
                 _activeQuerySessions++;

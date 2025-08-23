@@ -11,7 +11,8 @@
     <Color x:Key="Grey-300">#9AA8B7</Color>
 
     <Color x:Key="LightBlue-200">#2D8EFF</Color>
-    
+
+    <Color x:Key="DarkBlue-200">#475b70</Color>
     <Color x:Key="DarkBlue-800">#040D18</Color>
     <Color x:Key="DarkBlue-900">#00080E</Color>
 

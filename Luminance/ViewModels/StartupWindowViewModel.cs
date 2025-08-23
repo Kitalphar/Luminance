@@ -26,7 +26,6 @@ namespace Luminance.ViewModels
             }
         }
 
-
         public StartupWindowViewModel() 
         {
             CloseButtonCommand = new RelayCommand(CloseApplication);

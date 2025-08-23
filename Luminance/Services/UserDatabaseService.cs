@@ -1,7 +1,5 @@
-﻿using Microsoft.Data.Sqlite;
-using System.Threading.Channels;
-using System.Windows.Documents;
-using Luminance.Helpers;
+﻿using Luminance.Helpers;
+using Microsoft.Data.Sqlite;
 
 namespace Luminance.Services
 {
@@ -36,18 +34,27 @@ namespace Luminance.Services
             var userKey = GetUserKey();
 
             var conn = new SqliteConnection(Instance.ConnectionString);
-            conn.Open();
 
-            using (var cmd = conn.CreateCommand())
+            try
             {
-                cmd.CommandText = $"PRAGMA key = '{userKey}';";
-                cmd.ExecuteNonQuery();
+                conn.Open();
 
-                cmd.Parameters.Clear();
-                cmd.CommandText = "PRAGMA foreign_keys = ON;";
-                cmd.ExecuteNonQuery();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = $"PRAGMA key = '{userKey}';";
+                    cmd.ExecuteNonQuery();
+
+                    cmd.Parameters.Clear();
+                    cmd.CommandText = "PRAGMA foreign_keys = ON;";
+                    cmd.ExecuteNonQuery();
+                }
             }
-
+            catch
+            {
+                conn.Dispose();
+                throw new UnauthorizedAccessException("ERR_DB_KEY_INVALID(221)");
+            }
+            
             return conn;
         }
 
@@ -59,26 +66,36 @@ namespace Luminance.Services
 
         public void DecryptDatabase()
         {
+
             using var conn = new SqliteConnection(ConnectionString);
-            conn.Open();
 
-            var userKey = GetUserKey();
-
-            using (var cmd = conn.CreateCommand())
+            try
             {
-                cmd.CommandText = $"PRAGMA key = '{userKey}';";
-                cmd.ExecuteNonQuery();
+                conn.Open();
+
+                var userKey = GetUserKey();
+
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = $"PRAGMA key = '{userKey}';";
+                    cmd.ExecuteNonQuery();
+                }
+
+                //Test a simple query to ensure the key works (throws if invalid)
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "PRAGMA schema_version;";
+                    cmd.ExecuteScalar();
+                }
             }
-
-            // Test a simple query to ensure the key works (throws if invalid)
-            using (var cmd = conn.CreateCommand())
+            catch
             {
-                cmd.CommandText = "PRAGMA schema_version;";
-                cmd.ExecuteScalar();
+                conn.Dispose();
+                throw new UnauthorizedAccessException("ERR_DB_KEY_INVALID(221)");
             }
         }
 
-        //No-op with SQLCipher (DB always encrypted at rest).
+        //Not needed with SQLCipher (DB always encrypted at rest).
         //Could be used for PRAGMA rekey if password changes.
         public void EncryptDatabase()
         {
@@ -90,11 +107,13 @@ namespace Luminance.Services
             var userKey = AppSettings.Instance.Get("userKey");
 
             if (string.IsNullOrWhiteSpace(userKey))
-                throw new InvalidOperationException("ERR_USERKEY_NOT_AVAILABLE(221)");
+                throw new InvalidOperationException("ERR_NO_DATA(502)");
 
             return userKey;
         }
 
+        //Not changing password is a "security feature" and intentional.
+        //No current plan on using this.
         public void RekeyDatabase(string newKey)
         {
             using var conn = OpenConnection();

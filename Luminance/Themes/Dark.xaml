@@ -6,7 +6,7 @@
     <SolidColorBrush x:Key="SecondaryAppBgColor" Color="{DynamicResource DarkBlue-800}"/>
     
     <!--Border Brushes-->
-    <SolidColorBrush x:Key="PrimaryAppBorderColor" Color="{DynamicResource Grey-200}"/>
+    <SolidColorBrush x:Key="PrimaryAppBorderColor" Color="{DynamicResource DarkBlue-200}"/>
 
     <!--Text Color Brushes-->
     <SolidColorBrush x:Key="PrimaryTextColor" Color="{DynamicResource Grey-200}"/>
