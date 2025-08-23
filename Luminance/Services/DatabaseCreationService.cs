@@ -69,11 +69,9 @@ namespace Luminance.Services
                 
                 AppSettings.Instance.Set("fieldKey", fieldKey);
             }
-            catch (Exception ex)
+            catch
             {
-                string errorMessage = ErrorHandler.FindErrorMessage(ex.Message);
-
-                ErrorHandler.ShowErrorMessage(errorMessage);
+                throw;
             }
         }
 
