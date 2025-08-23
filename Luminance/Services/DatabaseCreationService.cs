@@ -1,7 +1,6 @@
-﻿using Microsoft.Data.Sqlite;
-using System.IO;
-using System.Windows;
+﻿using System.IO;
 using Luminance.Helpers;
+using Microsoft.Data.Sqlite;
 
 namespace Luminance.Services
 {
@@ -21,6 +20,10 @@ namespace Luminance.Services
 
                 string passwordSalt = cryptoService.GeneratePasswordSalt();
                 string recoveryKey = cryptoService.GenerateRecoveryKey();
+
+                /*Store recoveryKey as a flag for new user creation and to show it
+                  to user later (may be changed later. */
+                AppSettings.Instance.Set("recoveryKey", recoveryKey);
 
                 //Derive user Encryption Key from Password.
                 string userKey = cryptoService.GenerateUserKey(password, passwordSalt);
@@ -65,15 +68,6 @@ namespace Luminance.Services
                 });
                 
                 AppSettings.Instance.Set("fieldKey", fieldKey);
-
-                // TEMPORARY MESSAGEBOX, REMOVE LATER.
-                MessageBoxResult recoveryMessageBox = MessageBox.Show(
-                recoveryKey,
-                "Recovery Key",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning
-                );
-
             }
             catch (Exception ex)
             {
@@ -229,9 +223,9 @@ namespace Luminance.Services
                                 break;
                             case "currencies":
                                 cmd.CommandText = SqlQueryHelper.insertDefaultCurrenciesQueryString;
-                                cmd.Parameters.AddWithValue(SqlQueryHelper.idParam, dict[SqlQueryHelper.currenciesTableIdcolumn]);
-                                cmd.Parameters.AddWithValue(SqlQueryHelper.descriptionParam, dict[SqlQueryHelper.currenciesTableSymbolcolumn]);
-                                cmd.Parameters.AddWithValue(SqlQueryHelper.nameParam, dict[SqlQueryHelper.currenciesTableNamecolumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.idParam, dict[SqlQueryHelper.currenciesTableIdColumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.descriptionParam, dict[SqlQueryHelper.currenciesTableSymbolColumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.nameParam, dict[SqlQueryHelper.currenciesTableNameColumn]);
                                 break;
                         }
 

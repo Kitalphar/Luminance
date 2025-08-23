@@ -8,7 +8,7 @@ namespace Luminance.Helpers
         public static (bool IsValid, string Result, string? Error) SanitizeUsername(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
-                return (false, "", "ERR_USERNAME_ISNULL(201)");
+                return (false, "", "ERR_USERNAME_IS_NULL(201)");
 
             if (input.Length > 30)
                 return (false, "", "ERR_USERNAME_IS_LONG(202)");

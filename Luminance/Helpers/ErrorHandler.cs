@@ -31,14 +31,14 @@ namespace Luminance.Helpers
 
             string errorCode = errorCodeAndId.Substring(0, parenthesisStart);
             string errorId = errorCodeAndId.Substring(parenthesisStart + 1, (parenthesisEnd - parenthesisStart - 1));
-            string errorCodeColumn = "error_code";
-            string errorIdColumn = "id";
+            string errorCodeColumn = SqlQueryHelper.errorTableErrorCodeColumn;
+            string errorIdColumn = SqlQueryHelper.errorTableIdColumn;
 
             string? errorMessage = null;
 
             AppDbQueryCoordinator.RunQuery(conn =>
             {
-                string languageColumn = "en"; //this comes from settings later...
+                string languageColumn = AppSettings.Instance.Get("language");
 
                 //Attempt to find error message with error_code
                 errorMessage = ErrorMessageQuery(conn, languageColumn, errorCodeColumn, errorCode, true);
@@ -72,26 +72,26 @@ namespace Luminance.Helpers
 
         private static string? ErrorMessageQuery(SqliteConnection conn, string langColumn, string column, string value, bool tryFallBack)
         {
-            string sql = $"SELECT {langColumn} FROM error_messages WHERE {column} = @value;";
+            string queryString = SqlQueryHelper.ErrorMessageQueryStringBuilder(langColumn, column);
+            string? returnString = null;
 
-            using var command = new SqliteCommand(sql, conn);
-            command.Parameters.AddWithValue("@value", value);
-
-            using var reader = command.ExecuteReader();
-            //Read() returns true means Data exists, returns false means data does not exist or there is a typo
-            if (reader.Read())
+            AppDbQueryCoordinator.RunQuery(conn =>
             {
-                var result = reader.GetString(0);
+                using var command = new SqliteCommand(queryString, conn);
+                command.Parameters.AddWithValue(SqlQueryHelper.valueParam, value);
 
-                //Assuming translation is missing, we retry with the english error message.
-                if (string.IsNullOrWhiteSpace(result) && tryFallBack && langColumn != EnglishLangColumn)
-                    return TranslationMissing;
+                using var reader = command.ExecuteReader();
+                //If row has value and row value is NOT NULL.
+                if (reader.Read() && !reader.IsDBNull(0))
+                    returnString = reader.GetString(0); //Value could still be Empty string.
+            });
 
-                //If there is a value, return it, if not, returns null.
-                return result;
-            }
-            //If reader.Read didn't return true, return null for ID fallback to kick in
-            return null;
+            //Assuming translation is missing, we retry with the english error message.
+            if (string.IsNullOrWhiteSpace(returnString) && tryFallBack && langColumn != EnglishLangColumn)
+                return TranslationMissing;
+
+            //If fallback is not enabled, returnstring remains NullorWhiteSpace for ID query to kick in.
+            return returnString;
         }
 
         public static void ShowErrorMessage(string errorMessage)
