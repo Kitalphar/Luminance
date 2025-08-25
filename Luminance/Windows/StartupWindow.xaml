@@ -33,7 +33,7 @@
                     Margin="0,0,20,0"
                     Command="{Binding CloseButtonCommand}"/>
 
-            <TextBlock Style="{DynamicResource LoginWindowTitleStyle}" Grid.Row="1"/>
+            <TextBlock Style="{DynamicResource StartupWindowTitleStyle}" Grid.Row="1"/>
 
             <ContentControl Content="{Binding CurrentViewModel}" Grid.Row="2"/>
         </Grid>

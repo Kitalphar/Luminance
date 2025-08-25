@@ -25,7 +25,7 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -37,8 +37,7 @@
             Width="200"
             PlaceHolder="John Smith"
             Text="{Binding UserName, Mode=TwoWay, 
-               UpdateSourceTrigger=PropertyChanged,
-               PresentationTraceSources.TraceLevel=High}"
+               UpdateSourceTrigger=PropertyChanged}"
             />
 
         <Controls:PasswordInputTextBox
@@ -48,8 +47,7 @@
             Width="200"
             PlaceHolder="Password"
             Text="{Binding Password, Mode=TwoWay,
-            UpdateSourceTrigger=PropertyChanged,
-            PresentationTraceSources.TraceLevel=High}"
+            UpdateSourceTrigger=PropertyChanged}"
             />
 
         <Button 
@@ -79,6 +77,7 @@
             VerticalAlignment="Center" 
             TextAlignment="Center"
             Foreground="White"
+            FontSize="{DynamicResource FontSize-Medium}"
             Text="{Binding WelcomeMessage}"/>
 
     </Grid>

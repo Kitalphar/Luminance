@@ -11,8 +11,11 @@
         Style="{DynamicResource MainWindowStyleDesignStyle}">
     
     <Window.Resources>
-        <DataTemplate DataType="{x:Type vm:HomeViewModel}">
-            <views:HomeView />
+        <DataTemplate DataType="{x:Type vm:SetupViewModel}">
+            <views:SetupView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView />
         </DataTemplate>
     </Window.Resources>
 
@@ -66,12 +69,14 @@
             <StackPanel Grid.Row="1" Grid.Column="0" >
 
                 <RadioButton
-                    Content="Home"
-                    Style="{StaticResource MenuButtonTheme}"/>
+                    Content="Dashboard"
+                    Style="{StaticResource MenuButtonTheme}"
+                    IsEnabled="{Binding IsSetupComplete}"/>
 
                 <RadioButton
                     Content="Discovery"
-                    Style="{StaticResource MenuButtonTheme}"/>
+                    Style="{StaticResource MenuButtonTheme}"
+                    IsEnabled="{Binding IsSetupComplete}"/>
             </StackPanel>
 
             <ContentControl

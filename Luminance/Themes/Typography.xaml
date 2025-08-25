@@ -3,19 +3,14 @@
                     xmlns:System="clr-namespace:System;assembly=mscorlib">
 
     <System:Double x:Key="FontSize-Small">12</System:Double>
-    <System:Double x:Key="FontSize-Medium">14</System:Double>
-    <System:Double x:Key="FontSize-Large">24</System:Double>
+    <System:Double x:Key="FontSize-Medium">15</System:Double>
+    <System:Double x:Key="FontSize-Large">18</System:Double>
+    <System:Double x:Key="FontSize-XLarge">26</System:Double>
+    <System:Double x:Key="FontSize-Huge">46</System:Double>
 
     <FontWeight x:Key="FontWeight-Bold">Bold</FontWeight>
 
 
-    <!--Titles-->
-    <Style x:Key="LoginWindowTitleStyle" TargetType="TextBlock">
-        <Setter Property="Text" Value="Luminance"/>
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
-        <Setter Property="FontSize" Value="{DynamicResource FontSize-Large}"/>
-        <Setter Property="TextAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
-    </Style>
+    
 
 </ResourceDictionary>

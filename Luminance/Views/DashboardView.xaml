@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Luminance.Views.HomeView"
+﻿<UserControl x:Class="Luminance.Views.DashboardView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Luminance.Views"
              xmlns:vm="clr-namespace:Luminance.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="720" d:DesignWidth="1200">
+             d:DesignHeight="660" d:DesignWidth="1000">
     <Grid>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -14,11 +14,12 @@
                 <ColumnDefinition Width="10*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel
-                Grid.Row="1"
-                Grid.Column="0"
-                />  
-
+            <TextBlock
+                Foreground="White"
+                FontSize="26"
+                VerticalAlignment="Center"
+                TextAlignment="Center"
+                Grid.ColumnSpan="999">Boop</TextBlock>
 
         </Grid>
     </Grid>

@@ -9,6 +9,70 @@
         <ResourceDictionary Source="/Themes/Design.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
+    <!--Textblocks-->
+
+    <Style x:Key="PrimaryTextColorTextBlock" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+    </Style>
+
+    <Style x:Key="SecondaryTextColorTextBlock" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
+    </Style>
+
+    <Style x:Key="InvertedTextColorTextBlock" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource InvertedTextColor}"/>
+    </Style>
+
+    <Style x:Key="PrimaryTextColorXCenterYCenterTextBlock" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorTextBlock}">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="SecondaryTextColorXCenterYCenterTextBlock" TargetType="TextBlock" BasedOn="{StaticResource SecondaryTextColorTextBlock}">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="InvertedTextColorXCenterYCenterTextBlock" TargetType="TextBlock" BasedOn="{StaticResource InvertedTextColorTextBlock}">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
+    <!--Titles-->
+    
+    <Style x:Key="StartupWindowTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
+        <Setter Property="Text" Value="Luminance"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
+    </Style>
+
+    <Style x:Key="SetupViewTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Huge}"/>
+    </Style>
+
+    <Style x:Key="SetupViewSubTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
+        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
+    </Style>
+
+    <!--Labels-->
+    
+    <Style x:Key="BaseLabelStyle" TargetType="Label">
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
+    </Style>
+
+    <Style x:Key="SetupViewLabelStyle" TargetType="Label" BasedOn="{StaticResource BaseLabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+
+    <!--Buttons-->
+
+    <Style TargetType="Button">
+    </Style>
     
     <!--Window Control Buttons-->
     <Style x:Key="BaseWindowControlButtonStyle" TargetType="Button">
@@ -34,6 +98,20 @@
         <Setter Property="Content" Value="&#xE7E8;"/>
     </Style>
 
+    <Style x:Key="SetupViewContinueButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="100"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    
+    <!--Checkboxes-->
+
+    <Style x:Key="SetupWindowCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    
     <!--Radio Buttons-->
     <Style x:Key="MenuButtonTheme" 
            TargetType="{x:Type RadioButton}" 

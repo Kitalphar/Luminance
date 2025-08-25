@@ -26,6 +26,12 @@
         <Setter Property="Title" Value="Luminance"/>
     </Style>
     
+    <!--View Stlye-->
+    <Style x:Key="SetupViewDesignStyle" TargetType="UserControl">
+        <Setter Property="Height" Value="660"/>
+        <Setter Property="Width" Value="1000"/>
+    </Style>
+    
     <!--Border Style-->
     <Style x:Key="PrimaryBorderStyle" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource PrimaryAppBgColor}"/>

@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Luminance.Views
 {
     /// <summary>
-    /// Interaction logic for HomeView.xaml
+    /// Interaction logic for SetupView.xaml
     /// </summary>
-    public partial class HomeView : UserControl
+    public partial class SetupView : UserControl
     {
-        public HomeView()
+        public SetupView()
         {
             InitializeComponent();
         }

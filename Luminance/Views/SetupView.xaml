@@ -1,0 +1,99 @@
+﻿<UserControl x:Class="Luminance.Views.SetupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Luminance.Views"
+             xmlns:vm="clr-namespace:Luminance.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="660" d:DesignWidth="1000">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+
+        <TextBlock
+            Style="{DynamicResource SetupViewTitleStyle}"
+            Text="First time setup"
+            Grid.Column="1"
+            Grid.Row="0"/>
+
+        <TextBlock
+            Style="{DynamicResource SetupViewSubTitleStyle}"
+            Text="Please choose default settings for your account"
+            Grid.Column="1"
+            Grid.Row="1"/>
+
+        <Grid Grid.Column="1" Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Style="{DynamicResource SetupViewLabelStyle}"
+                   Target="{Binding ElementName=StartingBalanceComboBox}"
+                   Content="Starting Balance:"
+                   Grid.Column="0"/>
+
+            <ComboBox x:Name="StartingBalanceComboBox" Grid.Column="1" Height="40"/>
+
+            <Label Style="{DynamicResource SetupViewLabelStyle}"
+                   Target="{Binding ElementName=DefaultCurrencyComboBox}"
+                   Content="Default Currency:"
+                   Grid.Column="2"/>
+            
+            <ComboBox x:Name="DefaultCurrencyComboBox" Grid.Column="3" Height="40"/>
+
+            <Label Style="{DynamicResource SetupViewLabelStyle}"
+                   Target="{Binding ElementName=DefaultLanguageComboBox}"
+                   Content="Default Language:"
+                   Grid.Column="4"/>
+            
+            <ComboBox x:Name="DefaultLanguageComboBox" Grid.Column="5" Height="40"/>
+
+        </Grid>
+
+        <TextBlock
+            Style="{DynamicResource SetupViewSubTitleStyle}"
+            Text="This is your Recovery Key. Please copy it, save it. If you forget your password you can't login without this."
+            TextWrapping="wrap"
+            Grid.Column="1"
+            Grid.Row="3"/>
+
+        <CheckBox Style="{DynamicResource SetupWindowCheckBoxStyle}"
+            Content="Check this to confirm settings are acceptable"
+            Grid.Column="1" 
+            Grid.Row="4">
+            <CheckBox.LayoutTransform>
+                <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+            </CheckBox.LayoutTransform>
+        </CheckBox>
+        
+        <Button
+            Style="{DynamicResource SetupViewContinueButtonStyle}"
+            Content="Continue"
+            Grid.Row="5"  
+            Grid.Column="1"
+            Command="{Binding ContinueCommand}"
+            IsEnabled="{Binding HasConfirmed}" />
+    </Grid>
+</UserControl>

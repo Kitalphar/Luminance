@@ -1,6 +1,6 @@
 ﻿namespace Luminance.ViewModels
 {
-    class HomeViewModel
+    class DashboardViewModel
     {
     }
 }
