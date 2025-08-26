@@ -54,8 +54,9 @@
                    Content="Starting Balance:"
                    Grid.Column="0"/>
 
+            <!--Replace this with numeric input textbox!-->
             <ComboBox x:Name="StartingBalanceComboBox" Grid.Column="1" Height="40"/>
-
+            
             <Label Style="{DynamicResource SetupViewLabelStyle}"
                    Target="{Binding ElementName=DefaultCurrencyComboBox}"
                    Content="Default Currency:"

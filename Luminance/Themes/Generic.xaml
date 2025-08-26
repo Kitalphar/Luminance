@@ -146,6 +146,13 @@
         </Style.Triggers>
     </Style>
 
+    
+    <!--DataGrids-->
+
+    <Style x:Key="TransactionsDataGridStyle" TargetType="DataGrid">
+        <Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>
+    </Style>
+    
 
     <!--<Style TargetType="{x:Type local:CustomTextBox}">
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}" />
