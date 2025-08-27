@@ -12,8 +12,6 @@ namespace Luminance
         {
             InitializeComponent();
             this.DataContext = new MainWindowViewModel();
-
         }
-      
     }
 }

@@ -69,11 +69,27 @@
     </Style>
 
 
+    <!--ComboBoxes-->
+
+    <Style TargetType="ComboBox">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="4"/>
+
+    </Style>
+    
+    <!--Checkboxes-->
+
+    <Style x:Key="SetupWindowCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
+        <Setter Property="VerticalAlignment" Value="Bottom"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
     <!--Buttons-->
 
     <Style TargetType="Button">
     </Style>
-    
+
     <!--Window Control Buttons-->
     <Style x:Key="BaseWindowControlButtonStyle" TargetType="Button">
         <Setter Property="Width" Value="20"/>
@@ -103,15 +119,8 @@
         <Setter Property="Height" Value="40"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
-    
-    <!--Checkboxes-->
 
-    <Style x:Key="SetupWindowCheckBoxStyle" TargetType="CheckBox">
-        <Setter Property="Foreground" Value="{DynamicResource SecondaryTextColor}"/>
-        <Setter Property="VerticalAlignment" Value="Bottom"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-    </Style>
-    
+
     <!--Radio Buttons-->
     <Style x:Key="MenuButtonTheme" 
            TargetType="{x:Type RadioButton}" 
@@ -133,7 +142,7 @@
             </Setter>
 
             <Setter Property="Height" Value="50"/>
-            <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
+            <Setter Property="FontSize" Value="{DynamicResource FontSize-Large}"/>
             <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>

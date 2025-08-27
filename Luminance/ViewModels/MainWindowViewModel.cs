@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using Luminance.Helpers;
+using Luminance.Views;
 
 namespace Luminance.ViewModels
 {
@@ -49,14 +50,14 @@ namespace Luminance.ViewModels
 
             string recoveryKey = AppSettings.Instance.Get("recoveryKey");
 
+
+            
+
             if (!string.IsNullOrWhiteSpace(recoveryKey))
             {
                 var setupViewModel = new SetupViewModel();
                 setupViewModel.SetupCompleted += (s, e) => AfterSetupTasks();
-                CurrentViewModel = setupViewModel;
-                IsSetupComplete = false;
-
-                //Disable ability to quit App.
+                CurrentViewModel = new SetupView(setupViewModel);
             }
             else
             {

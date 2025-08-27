@@ -123,11 +123,13 @@ namespace Luminance.Services
 
                 userKey = cryptoService.DecryptEncryptedUserKey(encryptedUserKey, passwordOrRecoveryKey);
             }
+            else
+            {
+                string saltColumnName = "pw_salt";
+                string salt = RunUserDataSingleReturnQuery(saltColumnName, userNameHash);
 
-            string saltColumnName = "pw_salt";
-            string salt = RunUserDataSingleReturnQuery(saltColumnName, userNameHash);
-
-            userKey = cryptoService.GenerateUserKey(passwordOrRecoveryKey, salt);
+                userKey = cryptoService.GenerateUserKey(passwordOrRecoveryKey, salt);
+            }
 
             return userKey;
         }

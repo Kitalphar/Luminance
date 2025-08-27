@@ -3,8 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sysglb="clr-namespace:System.Globalization;assembly=mscorlib"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:local="clr-namespace:Luminance.Views"
-             xmlns:vm="clr-namespace:Luminance.ViewModels"
+             xmlns:vm="clr-namespace:Luminance.ViewModels" d:DataContext="{d:DesignInstance Type=vm:SetupViewModel}"
+             xmlns:controls="clr-namespace:Luminance.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="660" d:DesignWidth="1000">
     <Grid>
@@ -27,13 +30,13 @@
 
         <TextBlock
             Style="{DynamicResource SetupViewTitleStyle}"
-            Text="First time setup"
+            Text="{Binding SetupViewTitle}"
             Grid.Column="1"
             Grid.Row="0"/>
 
         <TextBlock
             Style="{DynamicResource SetupViewSubTitleStyle}"
-            Text="Please choose default settings for your account"
+            Text="{Binding SetupViewSubTitle}"
             Grid.Column="1"
             Grid.Row="1"/>
 
@@ -50,40 +53,77 @@
             </Grid.ColumnDefinitions>
 
             <Label Style="{DynamicResource SetupViewLabelStyle}"
-                   Target="{Binding ElementName=StartingBalanceComboBox}"
-                   Content="Starting Balance:"
+                   Target="{Binding ElementName=StartingBalanceDoubleUpDown}"
+                   Content="{Binding SetupViewBalanceLabel}"
                    Grid.Column="0"/>
 
             <!--Replace this with numeric input textbox!-->
-            <ComboBox x:Name="StartingBalanceComboBox" Grid.Column="1" Height="40"/>
-            
-            <Label Style="{DynamicResource SetupViewLabelStyle}"
-                   Target="{Binding ElementName=DefaultCurrencyComboBox}"
-                   Content="Default Currency:"
-                   Grid.Column="2"/>
-            
-            <ComboBox x:Name="DefaultCurrencyComboBox" Grid.Column="3" Height="40"/>
+            <xctk:DecimalUpDown x:Name="StartingBalanceDoubleUpDown"
+                Grid.Column="1"
+                Minimum="-1000" 
+                Maximum="999999999" 
+                Height="30"
+                FontSize="{DynamicResource FontSize-Medium}"
+                FormatString="F2"
+                Value="{Binding StartingBalance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                DefaultValue="0"/>
 
             <Label Style="{DynamicResource SetupViewLabelStyle}"
+                   Target="{Binding ElementName=DefaultCurrencyComboBox}"
+                   Content="{Binding SetupViewCurrencyLabel}"
+                   Grid.Column="2"/>
+            
+            <ComboBox x:Name="DefaultCurrencyComboBox"
+                      ItemsSource="{Binding CurrenciesCollection}"
+                      SelectedItem="{Binding SelectedCurrency, Mode=TwoWay}"
+                      Grid.Column="3" 
+                      Height="30">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Currency_code}" Margin="0,0,5,0"/>
+                            <TextBlock Text=" - " Margin="0,0,5,0"/>
+                            <TextBlock Text="{Binding CUrrency_Name}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+                <Label Style="{DynamicResource SetupViewLabelStyle}"
                    Target="{Binding ElementName=DefaultLanguageComboBox}"
-                   Content="Default Language:"
+                   Content="{Binding SetupViewLanguageLabel}"
                    Grid.Column="4"/>
             
-            <ComboBox x:Name="DefaultLanguageComboBox" Grid.Column="5" Height="40"/>
+            <ComboBox x:Name="DefaultLanguageComboBox"
+                      ItemsSource="{Binding LanguagesCollection}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                      Grid.Column="5" 
+                      Height="30"/>
 
         </Grid>
 
         <TextBlock
             Style="{DynamicResource SetupViewSubTitleStyle}"
-            Text="This is your Recovery Key. Please copy it, save it. If you forget your password you can't login without this."
+            Text="{Binding SetupViewRecoveryKeyMessage}"
             TextWrapping="wrap"
             Grid.Column="1"
             Grid.Row="3"/>
 
+        <controls:RecoveryKeyTextBox
+            Text="{Binding RecoveryKey}"
+            Height="50"
+            Width="700" 
+            Grid.Row="4" 
+            Grid.ColumnSpan="999"
+            HorizontalAlignment="Center"/>
+        
         <CheckBox Style="{DynamicResource SetupWindowCheckBoxStyle}"
-            Content="Check this to confirm settings are acceptable"
+            Content="{Binding SetupViewCheckbox}"
             Grid.Column="1" 
-            Grid.Row="4">
+            Grid.Row="5"
+            VerticalAlignment="Top"
+            IsChecked="{Binding HasConfirmed, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <CheckBox.LayoutTransform>
                 <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
             </CheckBox.LayoutTransform>
@@ -91,7 +131,7 @@
         
         <Button
             Style="{DynamicResource SetupViewContinueButtonStyle}"
-            Content="Continue"
+            Content="{Binding SetupViewContinueButton}"
             Grid.Row="5"  
             Grid.Column="1"
             Command="{Binding ContinueCommand}"

@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Data;
 using System.Windows.Input;
 using Luminance.Helpers;
 using Luminance.Services;
-using Microsoft.Data.Sqlite;
 
 namespace Luminance.ViewModels
 {
@@ -47,16 +45,22 @@ namespace Luminance.ViewModels
             }
         }
 
+        public class Localization
+        {
+            public string Key { get; set; } = String.Empty;
+            public int ID { get; set; }
+            public string Language { get; set; } = String.Empty;
+        }
+
         public string WelcomeMessage { get; set; }
         
-
         public LoginViewModel()
         {
             HandleLoginCommand = new RelayCommand(HandleLogin);
             HandleRegistrationCommand = new RelayCommand(HandleRegistration);
 
-            string stringKey = "loginwindow_description";
-            WelcomeMessage = GetLocalizedString(stringKey);
+            var localizer = new LocalizationHelper("loginwindow_description", 10, AppSettings.Instance.Get("language"));
+            WelcomeMessage = localizer.GetLocalizedString();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -82,30 +86,6 @@ namespace Luminance.ViewModels
                 HandleUserDataError(ex.Message);
             }
         }
-
-        private string GetLocalizedString(string stringKey)
-        {
-
-            string returnString = String.Empty;
-            string language = AppSettings.Instance.Get("language");
-            string queryString = SqlQueryHelper.SingleReturnLocalisationQueryStringBuilder(language);
-
-            AppDbQueryCoordinator.RunQuery(conn =>
-            {
-                using var command = new SqliteCommand(queryString, conn);
-                command.Parameters.AddWithValue(SqlQueryHelper.keyParam, stringKey);
-
-                using var reader = command.ExecuteReader();
-                if (!reader.Read())
-                    throw new DataException("ERR_NO_DATA(502)");
-
-                returnString = reader.GetString(0);
-            });
-
-            return returnString;
-        }
-
-
         private void HandleRegistration()
         {
             try
@@ -145,7 +125,7 @@ namespace Luminance.ViewModels
             {
                 IAuthService authService = new AuthService();
 
-                string authenticationResult = authService.LoginWithPassword(userName, recoveryKey);
+                string authenticationResult = authService.LoginWithRecoveryKey(userName, recoveryKey);
 
                 if (EvaluateAuthenticationResult(authenticationResult))
                     LoginSucceeded?.Invoke(); //Switch to MainWindow.

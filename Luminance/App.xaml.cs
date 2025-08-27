@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Windows;
 using Luminance.Helpers;
 using Luminance.Services;
@@ -38,6 +39,11 @@ namespace Luminance
                 HandleFatalError(e.Exception);
                 e.SetObserved();
             };
+
+            //Maybe create a Setting for this later in case user wants to change it?
+            var culture = new CultureInfo("de-DE");
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
 
             StartupWindow startupWindow = new StartupWindow();
             StartupWindowViewModel startupWindowViewModel = new StartupWindowViewModel(); 

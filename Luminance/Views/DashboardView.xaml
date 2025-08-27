@@ -19,7 +19,7 @@
                 FontSize="26"
                 VerticalAlignment="Center"
                 TextAlignment="Center"
-                Grid.ColumnSpan="999">Boop</TextBlock>
+                Grid.ColumnSpan="999">Placeholder</TextBlock>
 
         </Grid>
     </Grid>

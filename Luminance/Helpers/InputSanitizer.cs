@@ -29,7 +29,8 @@ namespace Luminance.Helpers
             if (input.Length < 8)
                 return (false, "", "ERR_PW_IS_SHORT(211)");
 
-            if (input.Length > 30)
+            //Allowing 32ch RecoveryKey trough for now, probably should change this later!
+            if (input.Length > 24 && input.Length != 32)
                 return (false, "", "ERR_PW_IS_LONG(212)");
 
             return (true, input, null);

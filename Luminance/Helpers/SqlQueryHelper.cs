@@ -1,4 +1,7 @@
-﻿namespace Luminance.Helpers
+﻿using System.Collections.Generic;
+using Xceed.Wpf.AvalonDock.Themes;
+
+namespace Luminance.Helpers
 {
     internal class SqlQueryHelper
     {
@@ -16,11 +19,17 @@
         public const string nameParam = "@name";
         public const string typeParam = "@type";
         public const string valueParam = "@value";
+        public const string filterParam = "@filter";
         public const string languageParam = "@lang";
         public const string descriptionParam = "@description";
 
         //App.db accounts table parameters
         private const string appAccountsDataTable = "accounts";
+
+        //App.db settings table parameters
+        private const string appSettingsDataTable = "settings";
+        private const string appSettingsTableKeyColumn = "key";
+        private const string appSettingsTableValueColumn = "value";
 
 
         //App.db db_scripts table parameters
@@ -28,6 +37,19 @@
         private const string scriptTableScriptContentColumn = "script_content";
         private const string scriptTableScriptIdColumn = "script_id";
         private const string scriptTableScriptTypeColumn = "type";
+
+        //App.db localized_strings table parameters
+        private const string localizedStringsTable = "localized_strings";
+        private const string localizationTableIdColumn = "id";
+        private const string localizationTableKeyColumn = "key";
+        private const string localizationDefaultLanguage = "en";
+        public const string LocalizationFallbackByIdQueryString = $"SELECT {localizationDefaultLanguage} FROM {localizedStringsTable} WHERE {localizationTableIdColumn} = {idParam} LIMIT 1";
+
+        //User.db accounts table parameters
+        private const string userAccountsDataTable = "accounts";
+        private const string userAccountsAccountIdColumn = "account_id";
+        private const string userAccountsCurrencyCodeColumn = "currency_code";
+        private const string userAccountsBalanceColumn = "balance";
 
         //User.db categories table parameters
         public const string categoriesDataTable = "categories";
@@ -60,7 +82,16 @@
         public const string userExistQueryString = $"SELECT 1 FROM accounts WHERE user_name = {usernameParam} LIMIT 1";
         public const string findFieldKeyQueryString = $"SELECT field_key FROM fieldsec";
 
-        //Error Message Query
+        //First Time Setup Queries.
+        public const string GetAvailableLanguagesQueryString = "SELECT iso_code, lang_name FROM languages";
+        public const string GetDefaultCurrencyQueryString = "SELECT currency_code, currency_name FROM currencies WHERE currency_code = 'USD'";
+        public const string GetCurrenciesQueryString = "SELECT currency_code, currency_name FROM currencies WHERE currency_code <> 'USD'";
+        public const string UpdateUserAccountsCurrencyQueryString = $"UPDATE {userAccountsDataTable} SET {userAccountsCurrencyCodeColumn} = {valueParam}";
+        public const string UpdateUserAccountsMainAccountBalanceQueryString = $"UPDATE {userAccountsDataTable} SET {userAccountsBalanceColumn} = {valueParam} WHERE {userAccountsAccountIdColumn} = 1"; //ID 1 should be Main account on first setup
+
+        //Settings Queries
+        public const string UpdateSettingQueryString = $"UPDATE {appSettingsDataTable} SET {appSettingsTableValueColumn} = {valueParam} WHERE {appSettingsTableKeyColumn} = {keyParam}";
+
 
         //String Builder Functions
         public static string ErrorMessageQueryStringBuilder(string language, string idOrKeyColumn)
@@ -70,7 +101,12 @@
 
         public static string SingleReturnLocalisationQueryStringBuilder(string language)
         {
-            return $"SELECT {language} FROM localized_strings WHERE key = {keyParam} LIMIT 1";
+            return $"SELECT {language} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} = {keyParam} LIMIT 1";
+        }
+
+        public static string SingleReturnLocalisationIdQueryStringBuilder(string language)
+        {
+            return $"SELECT {language} FROM {localizedStringsTable} WHERE {localizationTableIdColumn} = {idParam} LIMIT 1";
         }
 
         public static string UserDataSingleColumnReturnQueryBuilder(string column)
