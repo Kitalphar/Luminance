@@ -50,21 +50,23 @@ namespace Luminance.ViewModels
 
             string recoveryKey = AppSettings.Instance.Get("recoveryKey");
 
+            var setupViewModel = new SetupViewModel();
+            setupViewModel.SetupCompleted += (s, e) => AfterSetupTasks();
+            CurrentViewModel = new SetupView(setupViewModel);
 
-            
 
-            if (!string.IsNullOrWhiteSpace(recoveryKey))
-            {
-                var setupViewModel = new SetupViewModel();
-                setupViewModel.SetupCompleted += (s, e) => AfterSetupTasks();
-                CurrentViewModel = new SetupView(setupViewModel);
-            }
-            else
-            {
-                var dashboardViewModel = new DashboardViewModel();
-                CurrentViewModel = dashboardViewModel;
-                IsSetupComplete = true;
-            }
+            //if (!string.IsNullOrWhiteSpace(recoveryKey))
+            //{
+            //    var setupViewModel = new SetupViewModel();
+            //    setupViewModel.SetupCompleted += (s, e) => AfterSetupTasks();
+            //    CurrentViewModel = new SetupView(setupViewModel);
+            //}
+            //else
+            //{
+            //    var dashboardViewModel = new DashboardViewModel();
+            //    CurrentViewModel = dashboardViewModel;
+            //    IsSetupComplete = true;
+            //}
         }
 
         private void CloseApplication()

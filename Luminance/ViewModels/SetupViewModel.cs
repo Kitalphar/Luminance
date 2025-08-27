@@ -56,7 +56,7 @@ namespace Luminance.ViewModels
         public class CurrencyOption
         {
             public string Currency_code { get; set; } = String.Empty;
-            public string CUrrency_Name { get; set; } = String.Empty;
+            public string Currency_Name { get; set; } = String.Empty;
         }
 
         private string? _errorMessage;
@@ -185,7 +185,7 @@ namespace Luminance.ViewModels
                     CurrencyOption currencies = new()
                     {
                         Currency_code = reader.GetString(0),
-                        CUrrency_Name = reader.GetString(1)
+                        Currency_Name = reader.GetString(1)
                     };
 
                     CurrenciesCollection.Add(currencies);

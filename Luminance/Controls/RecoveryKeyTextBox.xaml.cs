@@ -27,12 +27,15 @@ namespace Luminance.Controls
                 Clipboard.SetText(Text);
 
                 // Change to checkmark
-                CopyButton.Content = "✔"; // Segoe UI Symbol checkmark
-                CopyButton.Foreground = Brushes.Green;
+                CopyButton.Content = FindResource("CheckmarkSymbol");
+                CopyButton.Foreground = (Brush)FindResource("SuccessColorBrush");
+
+                //Set TextBox Text color to SuccessColor as well to indicate successful copy.
+                KeyTextBox.Foreground = (Brush)FindResource("SuccessColorBrush");
 
                 // Wait 2 seconds then restore
                 await Task.Delay(2000);
-                CopyButton.Content = "📋"; // Clipboard symbol
+                CopyButton.Content = FindResource("ClipboardSymbol");
             }
         }
     }

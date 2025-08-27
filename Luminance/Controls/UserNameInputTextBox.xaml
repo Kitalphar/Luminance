@@ -9,8 +9,9 @@
     <Grid>
         <Border 
             CornerRadius="5" 
-            BorderThickness="1"
-            Background="White"
+            BorderThickness="0.5"
+            Background="{DynamicResource SecondaryAppBgColor}"
+            BorderBrush="{DynamicResource PrimaryAppBorderColor}"
             Padding="10,5,5,10"
             Panel.ZIndex="-1"
             />
@@ -22,6 +23,8 @@
             Background="Transparent"
             BorderBrush="Transparent"
             FontSize="14"
+            Foreground="{DynamicResource PrimaryTextColor}"
+            Padding="5"
             Text="{Binding Text,
                 RelativeSource={RelativeSource AncestorType=UserControl},
                 Mode=TwoWay,

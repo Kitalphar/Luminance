@@ -9,7 +9,7 @@
         <ResourceDictionary Source="/Themes/Design.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <!--Textblocks-->
+    <!--Textblock Bases-->
 
     <Style x:Key="PrimaryTextColorTextBlock" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
@@ -21,6 +21,10 @@
 
     <Style x:Key="InvertedTextColorTextBlock" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource InvertedTextColor}"/>
+    </Style>
+
+    <Style x:Key="WarningTextColorTextBlock" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WarningTextColor}"/>
     </Style>
 
     <Style x:Key="PrimaryTextColorXCenterYCenterTextBlock" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorTextBlock}">
@@ -38,6 +42,11 @@
         <Setter Property="TextAlignment" Value="Center"/>
     </Style>
 
+    <Style x:Key="WarningTextColorXCenterYCenterTextBlock" TargetType="TextBlock" BasedOn="{StaticResource WarningTextColorTextBlock}">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
     <!--Titles-->
     
     <Style x:Key="StartupWindowTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
@@ -46,13 +55,14 @@
     </Style>
 
     <Style x:Key="SetupViewTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
-        <Setter Property="TextAlignment" Value="Center"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="FontSize" Value="{DynamicResource FontSize-Huge}"/>
     </Style>
 
     <Style x:Key="SetupViewSubTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
-        <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
+    </Style>
+
+    <Style x:Key="SetupViewWarningSubTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource WarningTextColorXCenterYCenterTextBlock}">
         <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
     </Style>
 
@@ -71,10 +81,18 @@
 
     <!--ComboBoxes-->
 
-    <Style TargetType="ComboBox">
-        <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Padding" Value="4"/>
-
+    <Style x:Key="CurrencyComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="ItemTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Currency_code}" Margin="0,0,5,0"/>
+                        <TextBlock Text=" - " Margin="0,0,5,0"/>
+                        <TextBlock Text="{Binding Currency_Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     
     <!--Checkboxes-->
@@ -87,7 +105,13 @@
 
     <!--Buttons-->
 
-    <Style TargetType="Button">
+    <Style x:Key="SetupViewContinueButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="120"/>
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAppBorderColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
     <!--Window Control Buttons-->
@@ -113,13 +137,6 @@
     <Style x:Key="CloseWindowControlButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseWindowControlButtonStyle}">
         <Setter Property="Content" Value="&#xE7E8;"/>
     </Style>
-
-    <Style x:Key="SetupViewContinueButtonStyle" TargetType="Button">
-        <Setter Property="Width" Value="100"/>
-        <Setter Property="Height" Value="40"/>
-        <Setter Property="VerticalAlignment" Value="Center"/>
-    </Style>
-
 
     <!--Radio Buttons-->
     <Style x:Key="MenuButtonTheme" 
@@ -154,33 +171,12 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-
     
     <!--DataGrids-->
 
     <Style x:Key="TransactionsDataGridStyle" TargetType="DataGrid">
         <Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>
     </Style>
-    
-
-    <!--<Style TargetType="{x:Type local:CustomTextBox}">
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}" />
-        <Setter Property="Background" Value="{DynamicResource InputBackground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource InputBorder}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="5" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:CustomTextBox}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                        <ScrollViewer x:Name="PART_ContentHost"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>-->
 
 </ResourceDictionary>
     

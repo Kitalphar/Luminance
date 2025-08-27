@@ -105,8 +105,7 @@ namespace Luminance.Services
             if (!UserExists(userNameHash))
                 throw new DataException("ERR_USER_NOT_EXISTS(501)");
 
-            string dbColumnName = "user_db";
-            string dbName = RunUserDataSingleReturnQuery(dbColumnName, userNameHash);
+            string dbName = RunUserDataSingleReturnQuery(SqlQueryHelper.appAccountsTableUserDbColumn, userNameHash);
 
             return (userNameHash, dbName);
         }
@@ -118,15 +117,13 @@ namespace Luminance.Services
 
             if (isRecoveryKey)
             {
-                string encryptedUserKeyColumn = "user_key";
-                string encryptedUserKey = RunUserDataSingleReturnQuery(encryptedUserKeyColumn, userNameHash);
+                string encryptedUserKey = RunUserDataSingleReturnQuery(SqlQueryHelper.appAccountsTableUserKeyColumn, userNameHash);
 
                 userKey = cryptoService.DecryptEncryptedUserKey(encryptedUserKey, passwordOrRecoveryKey);
             }
             else
             {
-                string saltColumnName = "pw_salt";
-                string salt = RunUserDataSingleReturnQuery(saltColumnName, userNameHash);
+                string salt = RunUserDataSingleReturnQuery(SqlQueryHelper.appAccountsTablePasswordSaltColumn, userNameHash);
 
                 userKey = cryptoService.GenerateUserKey(passwordOrRecoveryKey, salt);
             }
@@ -146,7 +143,7 @@ namespace Luminance.Services
                 command.Parameters.AddWithValue(SqlQueryHelper.usernameParam, filterValue);
 
                 using var reader = command.ExecuteReader();
-                if (!reader.Read())
+                if (!reader.Read() || reader.IsDBNull(0))
                     throw new DataException("ERR_NO_DATA(502)");
 
                 returnString = reader.GetString(0);

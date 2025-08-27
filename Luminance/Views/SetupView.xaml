@@ -22,9 +22,9 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="10*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="83*"/>
+            <ColumnDefinition Width="833*"/>
+            <ColumnDefinition Width="83.333"/>
         </Grid.ColumnDefinitions>
 
 
@@ -50,61 +50,57 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Style="{DynamicResource SetupViewLabelStyle}"
-                   Target="{Binding ElementName=StartingBalanceDoubleUpDown}"
-                   Content="{Binding SetupViewBalanceLabel}"
-                   Grid.Column="0"/>
-
-            <!--Replace this with numeric input textbox!-->
-            <xctk:DecimalUpDown x:Name="StartingBalanceDoubleUpDown"
-                Grid.Column="1"
-                Minimum="-1000" 
-                Maximum="999999999" 
-                Height="30"
-                FontSize="{DynamicResource FontSize-Medium}"
-                FormatString="F2"
-                Value="{Binding StartingBalance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                DefaultValue="0"/>
-
-            <Label Style="{DynamicResource SetupViewLabelStyle}"
-                   Target="{Binding ElementName=DefaultCurrencyComboBox}"
-                   Content="{Binding SetupViewCurrencyLabel}"
-                   Grid.Column="2"/>
-            
-            <ComboBox x:Name="DefaultCurrencyComboBox"
-                      ItemsSource="{Binding CurrenciesCollection}"
-                      SelectedItem="{Binding SelectedCurrency, Mode=TwoWay}"
-                      Grid.Column="3" 
-                      Height="30">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Currency_code}" Margin="0,0,5,0"/>
-                            <TextBlock Text=" - " Margin="0,0,5,0"/>
-                            <TextBlock Text="{Binding CUrrency_Name}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+            <StackPanel Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Center">
 
                 <Label Style="{DynamicResource SetupViewLabelStyle}"
-                   Target="{Binding ElementName=DefaultLanguageComboBox}"
-                   Content="{Binding SetupViewLanguageLabel}"
-                   Grid.Column="4"/>
-            
-            <ComboBox x:Name="DefaultLanguageComboBox"
-                      ItemsSource="{Binding LanguagesCollection}"
-                      DisplayMemberPath="Name"
-                      SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
-                      Grid.Column="5" 
-                      Height="30"/>
+                       Target="{Binding ElementName=StartingBalanceDecimalUpDown}"
+                       Content="{Binding SetupViewBalanceLabel}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,0,20"/>
 
+                <xctk:DecimalUpDown x:Name="StartingBalanceDecimalUpDown"
+                    Style="{DynamicResource StartingBalanceDecimalUpDownStyle}"
+                    Value="{Binding StartingBalance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>   
+            </StackPanel>
+
+            <StackPanel Grid.Column="3" Grid.ColumnSpan="3" HorizontalAlignment="Center">
+
+                <Label Style="{DynamicResource SetupViewLabelStyle}"
+                       Target="{Binding ElementName=DefaultCurrencyComboBox}"
+                       Content="{Binding SetupViewCurrencyLabel}"
+                       Margin="0,0,0,20"/>
+
+                <ComboBox x:Name="DefaultCurrencyComboBox"
+                      Style="{DynamicResource CurrencyComboBoxStyle}"
+                      ItemsSource="{Binding CurrenciesCollection}"
+                      SelectedItem="{Binding SelectedCurrency, Mode=TwoWay}"
+                      Height="30"
+                      Width="200">
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Grid.Column="6" Grid.ColumnSpan="3" HorizontalAlignment="Center">
+
+                <Label Style="{DynamicResource SetupViewLabelStyle}"
+                       Target="{Binding ElementName=DefaultLanguageComboBox}"
+                       Content="{Binding SetupViewLanguageLabel}"
+                       Margin="0,0,0,20"/>
+
+                <ComboBox x:Name="DefaultLanguageComboBox"
+                          ItemsSource="{Binding LanguagesCollection}"
+                          DisplayMemberPath="Name"
+                          SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                          Height="30"
+                          Width="120"/>
+            </StackPanel>
         </Grid>
 
         <TextBlock
-            Style="{DynamicResource SetupViewSubTitleStyle}"
+            Style="{DynamicResource SetupViewWarningSubTitleStyle}"
             Text="{Binding SetupViewRecoveryKeyMessage}"
             TextWrapping="wrap"
             Grid.Column="1"
@@ -117,7 +113,7 @@
             Grid.Row="4" 
             Grid.ColumnSpan="999"
             HorizontalAlignment="Center"/>
-        
+
         <CheckBox Style="{DynamicResource SetupWindowCheckBoxStyle}"
             Content="{Binding SetupViewCheckbox}"
             Grid.Column="1" 
@@ -128,7 +124,7 @@
                 <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
             </CheckBox.LayoutTransform>
         </CheckBox>
-        
+
         <Button
             Style="{DynamicResource SetupViewContinueButtonStyle}"
             Content="{Binding SetupViewContinueButton}"

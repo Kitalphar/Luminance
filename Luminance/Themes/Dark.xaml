@@ -1,17 +1,26 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!--Special Colors-->
+    <!--These are here because i couldn't figure out how else to link them and SolidColorBrush wasn't working.-->
+    <Color x:Key="SuccessColor">#08CB00</Color>
+    
+    
     <!--Background Color Brushes-->
     <SolidColorBrush x:Key="PrimaryAppBgColor" Color="{DynamicResource DarkBlue-900}"/>
     <SolidColorBrush x:Key="SecondaryAppBgColor" Color="{DynamicResource DarkBlue-800}"/>
+    <SolidColorBrush x:Key="InputFieldBgColor" Color="{DynamicResource DarkBlue-300}"/>
     
     <!--Border Brushes-->
     <SolidColorBrush x:Key="PrimaryAppBorderColor" Color="{DynamicResource DarkBlue-200}"/>
+    <SolidColorBrush x:Key="HighlightedBorderColor" Color="{DynamicResource LightBlue-200}"/>
 
     <!--Text Color Brushes-->
-    <SolidColorBrush x:Key="PrimaryTextColor" Color="{DynamicResource Grey-200}"/>
+    <SolidColorBrush x:Key="PrimaryTextColor" Color="{DynamicResource White-300}"/>
     <SolidColorBrush x:Key="SecondaryTextColor" Color="{DynamicResource Grey-300}"/>
     <SolidColorBrush x:Key="InvertedTextColor" Color="{DynamicResource DarkBlue-900}"/>
+    <SolidColorBrush x:Key="WarningTextColor" Color="{DynamicResource Red-400}"/>
+    <SolidColorBrush x:Key="HighlightedTextColor" Color="{DynamicResource LightBlue-200}"/>
 
     <!--Window Control Button Brush-->
     <SolidColorBrush x:Key="WindowControlButtonColor" Color="{DynamicResource White-200}"/>

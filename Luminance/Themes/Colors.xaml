@@ -6,6 +6,7 @@
     
     <!-- Base colors -->
     <Color x:Key="White-200">white</Color>
+    <Color x:Key="White-300">#FFFDF6</Color>
     
     <Color x:Key="Grey-200">#E6F0F7</Color>
     <Color x:Key="Grey-300">#9AA8B7</Color>
@@ -13,8 +14,13 @@
     <Color x:Key="LightBlue-200">#2D8EFF</Color>
 
     <Color x:Key="DarkBlue-200">#475b70</Color>
+    <Color x:Key="DarkBlue-300">#34699A</Color>
     <Color x:Key="DarkBlue-800">#040D18</Color>
     <Color x:Key="DarkBlue-900">#00080E</Color>
+
+    <Color x:Key="Red-400">#FF3C3C</Color>
+
+    <Color x:Key="Green-300">#08CB00</Color>
 
 
 </ResourceDictionary> 

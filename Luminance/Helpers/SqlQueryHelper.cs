@@ -25,6 +25,10 @@ namespace Luminance.Helpers
 
         //App.db accounts table parameters
         private const string appAccountsDataTable = "accounts";
+        private const string appAccountUserNameColumn = "user_name";
+        public const string appAccountsTableUserDbColumn = "user_db";
+        public const string appAccountsTableUserKeyColumn = "user_key";
+        public const string appAccountsTablePasswordSaltColumn = "pw_salt";
 
         //App.db settings table parameters
         private const string appSettingsDataTable = "settings";
@@ -111,7 +115,7 @@ namespace Luminance.Helpers
 
         public static string UserDataSingleColumnReturnQueryBuilder(string column)
         {
-            return $"SELECT {column} FROM {appAccountsDataTable} WHERE user_name = {usernameParam}";
+            return $"SELECT {column} FROM {appAccountsDataTable} WHERE {appAccountUserNameColumn} = {usernameParam}";
         }
 
         object NormalizeDbValue(object value)
