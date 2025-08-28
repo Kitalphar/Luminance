@@ -5,18 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Luminance"
         xmlns:views="clr-namespace:Luminance.Views"
+        xmlns:conv="clr-namespace:Luminance.Helpers"
         xmlns:vm="clr-namespace:Luminance.ViewModels" d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Style="{DynamicResource MainWindowStyleDesignStyle}">
     
     <Window.Resources>
+        <conv:EqualsConverter x:Key="EqualsConverter"/>
         <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
             <views:DashboardView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:TransactionsViewModel}">
             <views:TransactionsView />
         </DataTemplate>
+        
     </Window.Resources>
 
     <Grid >
@@ -70,8 +73,10 @@
             <StackPanel Grid.Row="1" Grid.Column="0" >
 
                 <RadioButton
+                    GroupName="MainMenu"
                     Content="{Binding DashboardMenuItem}"
-                    IsEnabled="{Binding IsSetupComplete}">
+                    IsEnabled="{Binding IsSetupComplete}"
+                    IsChecked="{Binding SelectedMenu, Converter={StaticResource EqualsConverter}, ConverterParameter=Dashboard, Mode=TwoWay}">
                     <RadioButton.Style>
                         <Style TargetType="RadioButton" BasedOn="{StaticResource MenuButtonTheme}">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -85,8 +90,11 @@
                 </RadioButton>
 
                 <RadioButton
+                    GroupName="MainMenu"
+                    Name="transactions_radioButton"
                     Content="{Binding TransactionsMenuItem}"
-                    IsEnabled="{Binding IsSetupComplete}">
+                    IsEnabled="{Binding IsSetupComplete}"
+                    IsChecked="{Binding SelectedMenu, Converter={StaticResource EqualsConverter}, ConverterParameter=Transactions, Mode=TwoWay}">
                     <RadioButton.Style>
                         <Style TargetType="RadioButton" BasedOn="{StaticResource MenuButtonTheme}">
                             <Setter Property="Visibility" Value="Collapsed" />

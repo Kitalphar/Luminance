@@ -5,6 +5,33 @@
 
     <!--This file is for custom control design settings-->
 
+    <!--Login Window Textbox Styles-->
+
+    <Style x:Key="LoginWindowTextBoxStyle" TargetType="TextBox">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
+        <Setter Property="Foreground" Value="{DynamicResource InvertedTextColor}"/>
+        <Setter Property="Padding" Value="5"/>
+    </Style>
+
+    <Style x:Key="LoginWindowTextBoxBorderStyle" TargetType="Border">
+        <Setter Property="CornerRadius" Value="5"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Background" Value="{DynamicResource InputFieldBgColor}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAppBorderColor}"/>
+        <Setter Property="Padding" Value="10,5,5,10"/>
+        <Setter Property="Panel.ZIndex" Value="-1"/>
+    </Style>
+
+    <Style x:Key="LoginWindowTextBoxTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="5,0,0,0"/>
+        <Setter Property="Foreground" Value="{DynamicResource PlaceholderTextColor}"/>
+        <Setter Property="Panel.ZIndex" Value="-1"/>
+    </Style>
     
     <!--Recovery Key Text Box-->
     
@@ -44,11 +71,11 @@
         <Setter Property="DefaultValue" Value="0"/>
         <Setter Property="Height" Value="30"/>
         <Setter Property="Width" Value="120"/>
-        <Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>
+        <Setter Property="Background" Value="{DynamicResource InputFieldBgColor}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAppBorderColor}"/>
         <Setter Property="Padding" Value="5"/>
         <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource InvertedTextColor}"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="FormatString" Value="F2"/>
     </Style>

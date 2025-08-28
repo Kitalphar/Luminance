@@ -15,7 +15,7 @@ namespace Luminance.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private Dictionary<string, string> _localizationDictionary = new Dictionary<string, string>();
-
+        
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
@@ -47,6 +47,22 @@ namespace Luminance.ViewModels
             }
         }
 
+        private string _selectedMenu;
+        public string SelectedMenu
+        {
+            get => _selectedMenu;
+            set
+            {
+                if (_selectedMenu != value)
+                {
+                    _selectedMenu = value;
+                    OnPropertyChanged(nameof(SelectedMenu));
+                    UpdateCurrentViewModel();
+                }
+            }
+        }
+
+
         public MainWindowViewModel()
         {
             CloseButtonCommand = new RelayCommand(CloseApplication);
@@ -65,16 +81,27 @@ namespace Luminance.ViewModels
             }
             else
             {
+                UpdateLocalisedMenuStrings();
+
                 //Continue to Dashboard.
-                var dashboardViewModel = new DashboardViewModel();
-                CurrentViewModel = dashboardViewModel;
+                //var dashboardViewModel = new DashboardViewModel();
+                //CurrentViewModel = dashboardViewModel;
+
+                SelectedMenu = "Dashboard";
                 IsSetupComplete = true;
             }
+        }
 
-            //If recoveryKey is not present, run Menu localization.
-            if (string.IsNullOrWhiteSpace(recoveryKey))
+        private void UpdateCurrentViewModel()
+        {
+            switch (_selectedMenu)
             {
-                UpdateLocalisedMenuStrings();
+                case "Dashboard":
+                    CurrentViewModel = new DashboardViewModel();
+                    break;
+                case "Transactions":
+                    CurrentViewModel = new TransactionsViewModel();
+                    break;
             }
         }
 

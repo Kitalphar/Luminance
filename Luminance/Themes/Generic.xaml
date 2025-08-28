@@ -108,9 +108,9 @@
     <Style x:Key="SetupViewContinueButtonStyle" TargetType="Button">
         <Setter Property="Width" Value="120"/>
         <Setter Property="Height" Value="35"/>
-        <Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>
+        <!--<Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>-->
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAppBorderColor}"/>
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource InvertedTextColor}"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
