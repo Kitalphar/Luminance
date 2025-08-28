@@ -14,8 +14,13 @@ namespace Luminance.ViewModels
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        private Dictionary<string, string> _localizationDictionary = new Dictionary<string, string>();
+
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        public string DashboardMenuItem => GetLocalizedMenuString("sidebar_dashboard");
+        public string TransactionsMenuItem => GetLocalizedMenuString("sidebar_transactions");
 
 
         private object? _currentViewModel;
@@ -29,7 +34,7 @@ namespace Luminance.ViewModels
             }
         }
 
-        //Menu button isEnabled tied to this.
+        //Menu button & Close Window Button isEnabled tied to this.
         private bool _isSetupComplete;
         public bool IsSetupComplete
         {
@@ -48,25 +53,29 @@ namespace Luminance.ViewModels
             MaximizeWindowCommand = new RelayCommand(MaximizeWindow);
             MinimizeWindowCommand = new RelayCommand(MinimizeWindow);
 
+            //If recoverKey is present, the user just got registered.
             string recoveryKey = AppSettings.Instance.Get("recoveryKey");
 
-            var setupViewModel = new SetupViewModel();
-            setupViewModel.SetupCompleted += (s, e) => AfterSetupTasks();
-            CurrentViewModel = new SetupView(setupViewModel);
+            if (!string.IsNullOrWhiteSpace(recoveryKey))
+            {
+                //Run First Time Setup.
+                var setupViewModel = new SetupViewModel();
+                setupViewModel.SetupCompleted += (s, e) => AfterSetupTasks();
+                CurrentViewModel = new SetupView(setupViewModel);
+            }
+            else
+            {
+                //Continue to Dashboard.
+                var dashboardViewModel = new DashboardViewModel();
+                CurrentViewModel = dashboardViewModel;
+                IsSetupComplete = true;
+            }
 
-
-            //if (!string.IsNullOrWhiteSpace(recoveryKey))
-            //{
-            //    var setupViewModel = new SetupViewModel();
-            //    setupViewModel.SetupCompleted += (s, e) => AfterSetupTasks();
-            //    CurrentViewModel = new SetupView(setupViewModel);
-            //}
-            //else
-            //{
-            //    var dashboardViewModel = new DashboardViewModel();
-            //    CurrentViewModel = dashboardViewModel;
-            //    IsSetupComplete = true;
-            //}
+            //If recoveryKey is not present, run Menu localization.
+            if (string.IsNullOrWhiteSpace(recoveryKey))
+            {
+                UpdateLocalisedMenuStrings();
+            }
         }
 
         private void CloseApplication()
@@ -95,14 +104,43 @@ namespace Luminance.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                //Enable menu radiobuttons again.
+                //Enables menu radiobuttons again.
+                //Enables ability to quit App again.
                 IsSetupComplete = true;
 
-                //Enable ability to quit App again.
+                //Set localised menu titles after settings changed.
+                UpdateLocalisedMenuStrings();
 
                 var dashboardViewModel = new DashboardViewModel();
                 CurrentViewModel = dashboardViewModel;
             });
+        }
+
+        private string GetLocalizedMenuString(string key)
+        {
+            if (_localizationDictionary.TryGetValue(key, out var localizedValue))
+                return localizedValue;
+            return $"[{key}]"; //Fallback if missing key
+        }
+
+        private Dictionary<string, string> GetLocalisedStringsFromDb()
+        {
+            string menuItemsStringKey = "sidebar";
+            var helper = new LocalizationHelper(menuItemsStringKey + "\\_%", 0, AppSettings.Instance.Get("language"), true);
+
+            Dictionary<string, string> translatedStrings = new Dictionary<string, string>();
+
+            translatedStrings = helper.GetLocalizedStringsDictionary();
+
+            return translatedStrings;
+        }
+
+        private void UpdateLocalisedMenuStrings()
+        {
+            _localizationDictionary = GetLocalisedStringsFromDb();
+
+            OnPropertyChanged(nameof(DashboardMenuItem));
+            OnPropertyChanged(nameof(TransactionsMenuItem));
         }
 
     }

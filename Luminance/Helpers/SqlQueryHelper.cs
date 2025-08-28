@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Xceed.Wpf.AvalonDock.Themes;
-
-namespace Luminance.Helpers
+﻿namespace Luminance.Helpers
 {
     internal class SqlQueryHelper
     {
@@ -35,7 +32,6 @@ namespace Luminance.Helpers
         private const string appSettingsTableKeyColumn = "key";
         private const string appSettingsTableValueColumn = "value";
 
-
         //App.db db_scripts table parameters
         private const string scriptDataTable = "db_scripts";
         private const string scriptTableScriptContentColumn = "script_content";
@@ -47,7 +43,6 @@ namespace Luminance.Helpers
         private const string localizationTableIdColumn = "id";
         private const string localizationTableKeyColumn = "key";
         private const string localizationDefaultLanguage = "en";
-        public const string LocalizationFallbackByIdQueryString = $"SELECT {localizationDefaultLanguage} FROM {localizedStringsTable} WHERE {localizationTableIdColumn} = {idParam} LIMIT 1";
 
         //User.db accounts table parameters
         private const string userAccountsDataTable = "accounts";
@@ -74,28 +69,36 @@ namespace Luminance.Helpers
         public const string errorTableIdColumn = "id";
         public const string errorTableErrorCodeColumn = "error_code";
 
+        //Localisation Queries
+        public const string LocalizationFallbackByIdQueryString = $"SELECT {localizationDefaultLanguage} FROM {localizedStringsTable} WHERE {localizationTableIdColumn} = {idParam} LIMIT 1";
+        public const string LocalizationMultiReturnFallbackQueryString = $"SELECT {localizationTableKeyColumn}, {localizationDefaultLanguage} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} LIKE {keyParam}";
+        public const string LocalizationMultiReturnFallbackWithEscapeQueryString = $"SELECT  {localizationTableKeyColumn}, {localizationDefaultLanguage} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} LIKE {keyParam} ESCAPE '\'";
+
         //Registration sequence Queries
         public const string createTableQueryString = $"SELECT {scriptTableScriptContentColumn} FROM {scriptDataTable} WHERE {scriptTableScriptTypeColumn} = 'create_table' ORDER BY {scriptTableScriptIdColumn} ASC";
         public const string defaultValuesQueryString = $"SELECT {scriptTableScriptContentColumn} FROM {scriptDataTable} WHERE {scriptTableScriptTypeColumn} = 'insert_default_values' ORDER BY {scriptTableScriptIdColumn} ASC";
         public const string insertDefaultCategoriesQueryString = $"INSERT INTO {categoriesDataTable} ({categoriesTableIdColumn},{categoriesTableENNameColumn},{categoriesTableTypeColumn}, {categoriesTableParentIdColumn}) VALUES ({idParam},{nameParam},{typeParam},{categoriesTableParentIdParam})";
         public const string insertDefaultCurrenciesQueryString = $"INSERT INTO {currenciesDataTable} ({currenciesTableIdColumn}, {currenciesTableSymbolColumn}, {currenciesTableNameColumn}) VALUES ({idParam},{descriptionParam},{nameParam})";
-        public const string createUserQueryString = $"INSERT INTO accounts (user_name,user_db,pw_salt,user_key) VALUES ({usernameParam},{userDbParam},{passwordSaltParam},{userKeyParam})";
+        public const string createUserQueryString = $"INSERT INTO {appAccountsDataTable} ({appAccountUserNameColumn},{appAccountsTableUserDbColumn},{appAccountsTablePasswordSaltColumn},{appAccountsTableUserKeyColumn}) VALUES ({usernameParam},{userDbParam},{passwordSaltParam},{userKeyParam})";
         public const string insertFieldKeyQueryString = $"INSERT INTO fieldsec (field_key) VALUES({userFieldKeyParam})";
         
         //Login sequence Queries
-        public const string userExistQueryString = $"SELECT 1 FROM accounts WHERE user_name = {usernameParam} LIMIT 1";
+        public const string userExistQueryString = $"SELECT 1 FROM {appAccountsDataTable} WHERE {appAccountUserNameColumn} = {usernameParam} LIMIT 1";
         public const string findFieldKeyQueryString = $"SELECT field_key FROM fieldsec";
 
         //First Time Setup Queries.
         public const string GetAvailableLanguagesQueryString = "SELECT iso_code, lang_name FROM languages";
-        public const string GetDefaultCurrencyQueryString = "SELECT currency_code, currency_name FROM currencies WHERE currency_code = 'USD'";
-        public const string GetCurrenciesQueryString = "SELECT currency_code, currency_name FROM currencies WHERE currency_code <> 'USD'";
+        public const string GetDefaultCurrencyQueryString = $"SELECT {currenciesTableIdColumn}, {currenciesTableNameColumn} FROM {currenciesDataTable} WHERE {currenciesTableIdColumn} = 'USD'";
+        public const string GetCurrenciesQueryString = $"SELECT {currenciesTableIdColumn}, {currenciesTableNameColumn} FROM {currenciesDataTable} WHERE {currenciesTableIdColumn} <> 'USD'";
         public const string UpdateUserAccountsCurrencyQueryString = $"UPDATE {userAccountsDataTable} SET {userAccountsCurrencyCodeColumn} = {valueParam}";
         public const string UpdateUserAccountsMainAccountBalanceQueryString = $"UPDATE {userAccountsDataTable} SET {userAccountsBalanceColumn} = {valueParam} WHERE {userAccountsAccountIdColumn} = 1"; //ID 1 should be Main account on first setup
 
         //Settings Queries
         public const string UpdateSettingQueryString = $"UPDATE {appSettingsDataTable} SET {appSettingsTableValueColumn} = {valueParam} WHERE {appSettingsTableKeyColumn} = {keyParam}";
 
+        //Internal SqlHelper queries to support QueryBuilders
+        public const string MultiIdReturnByStringKeyHelperQueryString = $"SELECT {localizationTableIdColumn} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} LIKE {keyParam} ESCAPE '\\'";
+        public const string MultiIdReturnByStringKeyWithEscapeHelperQueryString = $"SELECT {localizationTableIdColumn} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} LIKE {keyParam} ESCAPE '\\'";
 
         //String Builder Functions
         public static string ErrorMessageQueryStringBuilder(string language, string idOrKeyColumn)
@@ -103,20 +106,38 @@ namespace Luminance.Helpers
             return $"SELECT {language} FROM {errorMessagesDataTable} WHERE {idOrKeyColumn} = {valueParam}";
         }
 
+        //Localization Querry String builders
         public static string SingleReturnLocalisationQueryStringBuilder(string language)
         {
             return $"SELECT {language} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} = {keyParam} LIMIT 1";
         }
 
-        public static string SingleReturnLocalisationIdQueryStringBuilder(string language)
+        public static string MultiReturnLocalisationQueryStringBuilder(string language)
+        {
+            return $"SELECT {localizationTableKeyColumn}, {language} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} LIKE {keyParam}";
+        }
+
+        public static string MultiReturnLocalisationQueryStringBuilderWithEscape(string language)
+        {
+            return $"SELECT  {localizationTableKeyColumn}, {language} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} LIKE {keyParam} ESCAPE '\\'";
+        }
+
+        public static string SingleReturnLocalisationByIdQueryStringBuilder(string language)
         {
             return $"SELECT {language} FROM {localizedStringsTable} WHERE {localizationTableIdColumn} = {idParam} LIMIT 1";
         }
 
+        public static string MultiReturnLocalisationByIdQueryStringBuilder(string language)
+        {
+            return $"SELECT {localizationTableKeyColumn}, {language} FROM {localizedStringsTable} WHERE {localizationTableIdColumn} IN ({idParam})";
+        }
+
+        //User data Query String builders
         public static string UserDataSingleColumnReturnQueryBuilder(string column)
         {
             return $"SELECT {column} FROM {appAccountsDataTable} WHERE {appAccountUserNameColumn} = {usernameParam}";
         }
+
 
         object NormalizeDbValue(object value)
         {

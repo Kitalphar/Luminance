@@ -16,7 +16,7 @@ namespace Luminance.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged(string name) =>
-       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public ObservableCollection<LanguageOption> LanguagesCollection { get; } = new();
         public ObservableCollection<CurrencyOption> CurrenciesCollection { get; } = new();
@@ -123,7 +123,7 @@ namespace Luminance.ViewModels
 
         private string GetLocalizedString(string key, int id)
         {
-            var helper = new LocalizationHelper(key, id, AppSettings.Instance.Get("language"));
+            var helper = new LocalizationHelper(key, id, AppSettings.Instance.Get("language"), false);
             return helper.GetLocalizedString();
         }
 
@@ -215,6 +215,7 @@ namespace Luminance.ViewModels
 
                 //Overwrite language value in settings.
                 SaveSettingsChanges("language");
+                AppSettings.Instance.Set("language", SelectedLanguage.ISO_code);
 
                 //Overwrite all default accounts currency setting.
                 SaveUserSettingsChanges(SqlQueryHelper.UpdateUserAccountsCurrencyQueryString, false);

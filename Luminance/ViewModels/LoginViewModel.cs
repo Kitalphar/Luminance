@@ -59,7 +59,7 @@ namespace Luminance.ViewModels
             HandleLoginCommand = new RelayCommand(HandleLogin);
             HandleRegistrationCommand = new RelayCommand(HandleRegistration);
 
-            var localizer = new LocalizationHelper("loginwindow_description", 10, AppSettings.Instance.Get("language"));
+            var localizer = new LocalizationHelper("loginwindow_description", 10, AppSettings.Instance.Get("language"), false);
             WelcomeMessage = localizer.GetLocalizedString();
         }
 

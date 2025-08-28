@@ -70,12 +70,12 @@
             <StackPanel Grid.Row="1" Grid.Column="0" >
 
                 <RadioButton
-                    Content="Dashboard"
+                    Content="{Binding DashboardMenuItem}"
                     Style="{StaticResource MenuButtonTheme}"
                     IsEnabled="{Binding IsSetupComplete}"/>
 
                 <RadioButton
-                    Content="Transactions"
+                    Content="{Binding TransactionsMenuItem}"
                     Style="{StaticResource MenuButtonTheme}"
                     IsEnabled="{Binding IsSetupComplete}"/>
             </StackPanel>
