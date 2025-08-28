@@ -71,13 +71,33 @@
 
                 <RadioButton
                     Content="{Binding DashboardMenuItem}"
-                    Style="{StaticResource MenuButtonTheme}"
-                    IsEnabled="{Binding IsSetupComplete}"/>
+                    IsEnabled="{Binding IsSetupComplete}">
+                    <RadioButton.Style>
+                        <Style TargetType="RadioButton" BasedOn="{StaticResource MenuButtonTheme}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSetupComplete}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RadioButton.Style>
+                </RadioButton>
 
                 <RadioButton
                     Content="{Binding TransactionsMenuItem}"
-                    Style="{StaticResource MenuButtonTheme}"
-                    IsEnabled="{Binding IsSetupComplete}"/>
+                    IsEnabled="{Binding IsSetupComplete}">
+                    <RadioButton.Style>
+                        <Style TargetType="RadioButton" BasedOn="{StaticResource MenuButtonTheme}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsSetupComplete}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </RadioButton.Style>
+                </RadioButton>
             </StackPanel>
 
             <ContentControl

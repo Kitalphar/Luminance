@@ -142,6 +142,5 @@ namespace Luminance.ViewModels
             OnPropertyChanged(nameof(DashboardMenuItem));
             OnPropertyChanged(nameof(TransactionsMenuItem));
         }
-
     }
 }
