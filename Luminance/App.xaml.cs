@@ -41,7 +41,7 @@ namespace Luminance
             };
 
             //Maybe create a Setting for this later in case user wants to change it?
-            var culture = new CultureInfo("de-DE");
+            var culture = new CultureInfo("en-US");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
 

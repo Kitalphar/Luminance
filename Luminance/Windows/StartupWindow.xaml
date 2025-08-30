@@ -19,7 +19,7 @@
 
 
     <Grid>
-        <Border Style="{DynamicResource StartupWindowBorderStyle}"/>
+        <Border Style="{DynamicResource StartupWindowBorderStyle}" MouseDown="DragWindow"/>
 
         <Grid>
             <Grid.RowDefinitions>

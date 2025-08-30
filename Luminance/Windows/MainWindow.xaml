@@ -23,7 +23,7 @@
     </Window.Resources>
 
     <Grid >
-        <Grid Panel.ZIndex="1" >
+        <Grid Panel.ZIndex="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
                 <RowDefinition Height="*"/>
@@ -40,7 +40,7 @@
             <!--Outer border radius-->
             <Border Style="{DynamicResource MainWindowOuterBorderStyle}"/>
             <!--Header border radius-->
-            <Border Style="{DynamicResource MainWindowHeaderBorderStyle}"/>
+            <Border Style="{DynamicResource MainWindowHeaderBorderStyle}" MouseDown="DragWindow"/>
             <!--Inner border radius-->
             <Border Style="{DynamicResource MainWindowInnerBorderStyle}"/>
             

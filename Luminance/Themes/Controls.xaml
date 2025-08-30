@@ -65,7 +65,7 @@
 
     <!--Exceed WPF Toolkit NumericUpDown-->
     
-    <Style x:Key="StartingBalanceDecimalUpDownStyle" TargetType="xctk:DecimalUpDown">
+    <Style x:Key="DecimalUpDownStyle" TargetType="xctk:DecimalUpDown">
         <Setter Property="Minimum" Value="-1000000"/>
         <Setter Property="Maximum" Value="999999999"/>
         <Setter Property="DefaultValue" Value="0"/>

@@ -63,7 +63,7 @@
                        Margin="0,0,0,20"/>
 
                 <xctk:DecimalUpDown x:Name="StartingBalanceDecimalUpDown"
-                    Style="{DynamicResource StartingBalanceDecimalUpDownStyle}"
+                    Style="{DynamicResource DecimalUpDownStyle}"
                     Value="{Binding StartingBalance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>   
             </StackPanel>
 
@@ -91,11 +91,12 @@
                        Margin="0,0,0,20"/>
 
                 <ComboBox x:Name="DefaultLanguageComboBox"
+                          Style="{DynamicResource LanguageComboBoxStyle}"
                           ItemsSource="{Binding LanguagesCollection}"
                           DisplayMemberPath="Name"
                           SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
                           Height="30"
-                          Width="120"/>
+                          Width="130"/>
             </StackPanel>
         </Grid>
 

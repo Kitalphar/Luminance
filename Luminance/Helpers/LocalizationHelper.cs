@@ -155,7 +155,6 @@ namespace Luminance.Helpers
                     case LocalizationFilter.Key:
                     case LocalizationFilter.KeyWithEscape:
                         command.Parameters.AddWithValue(SqlQueryHelper.keyParam, _localizationKey);
-                        Trace.WriteLine(queryString);
                         break;
                     case LocalizationFilter.Default:
                         command.Parameters.AddWithValue(SqlQueryHelper.idParam, _localizationId);

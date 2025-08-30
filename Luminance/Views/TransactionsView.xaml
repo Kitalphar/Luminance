@@ -5,10 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Luminance.Views"
              xmlns:vm="clr-namespace:Luminance.ViewModels"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="660" d:DesignWidth="1000">
-    <Grid>
 
+    <UserControl.DataContext>
+        <vm:TransactionsViewModel/>
+    </UserControl.DataContext>
+
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.5*"/>
             <ColumnDefinition Width="11*"/>
@@ -26,29 +32,130 @@
             Grid.Row="1" 
             Grid.Column="1" 
             Style="{DynamicResource TransactionsDataGridStyle}"
-            AutoGenerateColumns="True"/>
+            AutoGenerateColumns="false"
+            CanUserAddRows="False"
+            ItemsSource="{Binding TransactionsCollection}"
+            RowEditEnding="DataGrid_RowEditEnding"
+            PreviewKeyDown="DataGrid_PreviewKeyDown">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding transaction_id}" IsReadOnly="True" Width="0.5*"/>
+                <DataGridTextColumn Header="Account" Binding="{Binding account_name}" IsReadOnly="True" Width="*"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding description}" Width="2.5*"/>
+                <DataGridTextColumn Header="Amount" Binding="{Binding trans_amount, StringFormat=C}" Width="*"/>
+                <DataGridTextColumn Header="Currency" Binding="{Binding currency_code}" IsReadOnly="True" Width="0.75*"/>
+                <DataGridTextColumn Header="Category" Binding="{Binding category_name}" Width="2*"/>
+                <DataGridTextColumn Header="Date" Binding="{Binding trans_date, StringFormat=yyyy/MM/dd HH:mm:ss}" IsReadOnly="True" Width="1.5*"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
-        <Grid Grid.Row="3" Grid.Column="1">
+        <Grid Grid.Row="2" Grid.Column="1">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.6*"/>
+                <ColumnDefinition Width="1.25*"/>
+                <ColumnDefinition Width="0.75*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.9*"/>
+                <ColumnDefinition Width="0.6*"/>
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+
+            <StackPanel 
+                Style="{DynamicResource TransactionsInputFieldsStackPanelStyle}"
+                HorizontalAlignment="Left"
+                Grid.Column="0">
+                
+                <Label Content="Account" Style="{DynamicResource TransactionsInputFieldsLabelStyle}"/>
+
+                <ComboBox
+                    x:Name="AccountInputComboBox"
+                    Style="{DynamicResource TransactionViewComboBoxBoxStyle}"
+                    ItemsSource="{Binding AccountsCollection}"
+                    DisplayMemberPath="account_name"
+                    SelectedItem="{Binding SelectedAccount, Mode=TwoWay}"
+                    Width="90"/>
+            </StackPanel>
+
+            <StackPanel
+                Style="{DynamicResource TransactionsInputFieldsStackPanelStyle}"
+                HorizontalAlignment="Left"
+                Grid.Column="1">
+
+                <Label Content="Description" Style="{DynamicResource TransactionsInputFieldsLabelStyle}"/>
+
+                <TextBox
+                    Width="220" 
+                    Height="30"
+                    Text="{Binding NewDescription, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                    Background="{DynamicResource InputFieldBgColor}"
+                    Foreground="{DynamicResource InvertedTextColor}" 
+                    FontSize="{DynamicResource FontSize-Medium}"/>
+            </StackPanel>
+
+            <StackPanel 
+                Style="{DynamicResource TransactionsInputFieldsStackPanelStyle}"
+                HorizontalAlignment="Center"
+                Grid.Column="2">
+
+                <Label Content="Amount" Style="{DynamicResource TransactionsInputFieldsLabelStyle}"/> 
+                
+                <xctk:DecimalUpDown
+                    Style="{DynamicResource DecimalUpDownStyle}"
+                    Value="{Binding InputBalance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+
+            <StackPanel 
+                Style="{DynamicResource TransactionsInputFieldsStackPanelStyle}" 
+                HorizontalAlignment="Center"
+                Grid.Column="3">
+
+                <Label Content="Category" Style="{DynamicResource TransactionsInputFieldsLabelStyle}"/>
+
+                <ComboBox
+                    x:Name="CategoryInputComboBox"
+                    Style="{DynamicResource TransactionViewComboBoxBoxStyle}"
+                    ItemsSource="{Binding CategoriesCollection}"
+                    DisplayMemberPath="category_name"
+                    SelectedValuePath="category_id"
+                    SelectedValue="{Binding SelectedCategoryId, Mode=TwoWay}"
+                    Width="170"/>    
+            </StackPanel>
+
+            <StackPanel 
+                Style="{DynamicResource TransactionsInputFieldsStackPanelStyle}" 
+                HorizontalAlignment="Center"
+                Grid.Column="4">
+                
+                <Label Content="Date" Style="{DynamicResource TransactionsInputFieldsLabelStyle}"/>
+
+                <xctk:DateTimePicker
+                    Value="{Binding SelectedDate, Mode=TwoWay}"
+                    Height="30"
+                    Width="150"
+                    Language="en-Us"
+                    Format="Custom"
+                    FormatString="yyyy-MM-dd HH:mm:ss"/>
+            </StackPanel>
+
+            <StackPanel 
+                Style="{DynamicResource TransactionsInputFieldsStackPanelStyle}" 
+                HorizontalAlignment="Right"
+                Grid.Column="5">
+
+                <Label Content="UploadButton"/>
+                
+                <Button
+                    x:Name="TransactionUploadButton"
+                    Content="Upload"
+                    Command="{Binding UploadCommand}"
+                    Foreground="{DynamicResource InvertedTextColor}"
+                    Height="30"
+                    Width="100" />
+            </StackPanel>
+
         </Grid>
-        
     </Grid>
 </UserControl>

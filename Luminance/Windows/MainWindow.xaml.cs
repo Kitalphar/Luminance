@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using Luminance.ViewModels;
 
 namespace Luminance
@@ -13,5 +14,12 @@ namespace Luminance
             InitializeComponent();
             this.DataContext = new MainWindowViewModel();
         }
+
+        private void DragWindow(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
     }
 }

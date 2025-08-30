@@ -78,10 +78,21 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
 
+    <Style x:Key="TransactionsInputFieldsLabelStyle" TargetType="Label">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Small}"/>
+    </Style>
+    
+    <!--Stackpanels-->
 
+    <Style x:Key="TransactionsInputFieldsStackPanelStyle" TargetType="StackPanel">
+        <Setter Property="Grid.Row" Value="1"/>
+        <Setter Property="VerticalAlignment" Value="top"/>
+    </Style>
+    
     <!--ComboBoxes-->
-
-    <Style x:Key="CurrencyComboBoxStyle" TargetType="ComboBox">
+    
+    <Style x:Key="CurrencyComboBoxStyle" TargetType="ComboBox" >
         <Setter Property="ItemTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -94,7 +105,21 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="LanguageComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="Background" Value="{DynamicResource InputFieldBgColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource InvertedTextColor}"/>
+    </Style>
+
+    <Style x:Key="TransactionViewComboBoxBoxStyle" TargetType="ComboBox">
+        <Setter Property="Background" Value="{DynamicResource InputFieldBgColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource InvertedTextColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Height" Value="30"/>
+    </Style>
+
+
     <!--Checkboxes-->
 
     <Style x:Key="SetupWindowCheckBoxStyle" TargetType="CheckBox">
@@ -176,6 +201,41 @@
 
     <Style x:Key="TransactionsDataGridStyle" TargetType="DataGrid">
         <Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>
+        <Setter Property="AlternatingRowBackground" Value="{DynamicResource PrimaryAppBgColor}"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource PrimaryAppBorderColor}"/>
+        <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource PrimaryAppBorderColor}"/>
+        <Setter Property="AlternationCount" Value="2"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
+        
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource MenuButtonActiveStateColor}"/>
+                            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource SecondaryAppBgColor}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAppBorderColor}"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="Padding" Value="5,0,0,5"/>
+                    <Setter Property="FontWeight" Value="DemiBold"/>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        
     </Style>
 
 </ResourceDictionary>
