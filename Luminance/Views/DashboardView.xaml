@@ -3,23 +3,60 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Luminance.Views"
-             xmlns:vm="clr-namespace:Luminance.ViewModels"
+             xmlns:views="clr-namespace:Luminance.Views"
+             xmlns:vm="clr-namespace:Luminance.ViewModels" d:DataContext="{d:DesignInstance Type=vm:DashboardViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="660" d:DesignWidth="1000">
+
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type vm:AccountsBalanceViewModel}">
+            <views:AccountsBalanceView/>
+        </DataTemplate>
+    </UserControl.Resources>
+    
+    
     <Grid>
         <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="0.5*"/>
+            </Grid.RowDefinitions>
+            
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.5*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock
-                Foreground="White"
-                FontSize="26"
-                VerticalAlignment="Center"
-                TextAlignment="Center"
-                Grid.ColumnSpan="999">Placeholder</TextBlock>
+            <ContentControl
+                Content="{Binding AccountsBalanceViewModel}"
+                Grid.Column="1"
+                Grid.Row="1"
+                Grid.ColumnSpan="4"
+                Grid.RowSpan="3"/>
 
         </Grid>
     </Grid>

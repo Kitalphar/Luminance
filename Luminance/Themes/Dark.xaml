@@ -4,6 +4,8 @@
     <!--Special Colors-->
     <!--These are here because i couldn't figure out how else to link them and SolidColorBrush wasn't working.-->
     <Color x:Key="SuccessColor">#08CB00</Color>
+    <Color x:Key="PositiveBalanceColor">#08CB00</Color>
+    <Color x:Key="NegativeBalanceColor">#FF3C3C</Color>
     
     
     <!--Background Color Brushes-->

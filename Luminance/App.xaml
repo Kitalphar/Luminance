@@ -26,6 +26,10 @@
                 <view:LoginView/>
             </DataTemplate>
 
+            <!--App-wide Brushes for Views-->
+            <SolidColorBrush x:Key="PositiveBalanceBrush" Color="{DynamicResource PositiveBalanceColor}"/>
+            <SolidColorBrush x:Key="NegativeBalanceBrush" Color="{DynamicResource NegativeBalanceColor}"/>
+
         </ResourceDictionary>
 
     </Application.Resources>

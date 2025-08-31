@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
 using System.Windows;
 using System.Windows.Input;
 using Luminance.Helpers;
@@ -19,7 +18,7 @@ namespace Luminance.ViewModels
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableCollection<TransactionRow> EditedTransactions { get; } = new();
-        public List<int> DeletedTransactionIds { get; } = new();
+        public ObservableCollection<TransactionRow> DeletedTransactions { get; } = new();
         public ObservableCollection<NewTransactionRow> NewTransactions { get; } = new();
 
         protected void OnPropertyChanged(string propertyName) =>
@@ -138,6 +137,7 @@ namespace Luminance.ViewModels
             public required string category_name { get; set; }
             public required DateTime trans_date { get; set; }
             public required int category_id { get; set; } //For internal logic only
+            public required int account_id { get; set; } //For internal logic only
         }
 
         public class NewTransactionRow
@@ -191,6 +191,7 @@ namespace Luminance.ViewModels
                             category_name = reader.GetString(5),
                             trans_date = reader.GetDateTime(6),
                             category_id = reader.GetInt32(7),
+                            account_id = reader.GetInt32(8),
                         };
 
                         Application.Current.Dispatcher.Invoke(() => TransactionsCollection.Add(row));
@@ -271,13 +272,14 @@ namespace Luminance.ViewModels
 
             return misc?.category_id ?? -1; //If -1 is returned, treat as error
         }
-
+       
         public void UpdateChanges()
         {
             foreach (var row in EditedTransactions)
                 row.category_id = ResolveCategoryId(row.category_name);
 
-            
+            bool isUpdated = false;
+            decimal balanceToInsert = 0;
 
             //If user entered a balance, it should be a legitimate entry.
             if (InputBalance != 0)
@@ -285,7 +287,7 @@ namespace Luminance.ViewModels
                 //Safeguard against false positive entry
                 if (InputBalance > 0)
                 {
-                    decimal balanceToInsert = InputBalance;
+                    balanceToInsert = InputBalance;
 
                     // Check the type of the selected category
                     var selectedCategory = CategoriesCollection
@@ -295,14 +297,14 @@ namespace Luminance.ViewModels
                     {
                         //If it's an expense, make the number negative
                         balanceToInsert = Math.Abs(balanceToInsert) * -1;
-                        InputBalance = balanceToInsert;
+                        //InputBalance = balanceToInsert;
                     }
                 }
 
                 //Safeguard against false negative entry
                 if (InputBalance < 0)
                 {
-                    decimal balanceToInsert = InputBalance;
+                    balanceToInsert = InputBalance;
 
                     // Check the type of the selected category
                     var selectedCategory = CategoriesCollection
@@ -312,7 +314,7 @@ namespace Luminance.ViewModels
                     {
                         //If it's an income, make the number positive
                         balanceToInsert = Math.Abs(balanceToInsert);
-                        InputBalance = balanceToInsert;
+                        //InputBalance = balanceToInsert;
                     }
                 }
 
@@ -321,7 +323,7 @@ namespace Luminance.ViewModels
                 {
                     account_id = SelectedAccountId,
                     description = NewDescription,
-                    trans_amount = InputBalance,
+                    trans_amount = balanceToInsert,
                     currency_code = SelectedCurrency,
                     category_id = SelectedCategoryId,
                     trans_date = SelectedDateIso8601
@@ -337,40 +339,126 @@ namespace Luminance.ViewModels
                 try
                 {
                     //Handle deleted rows
-                    foreach (var id in DeletedTransactionIds)
+                    if (DeletedTransactions.Count != 0)
                     {
-                        using var deleteCmd = userConn.CreateCommand();
-                        deleteCmd.CommandText = SqlQueryHelper.DeleteTransactionRowFromDbQueryString;
-                        deleteCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, id);
-                        deleteCmd.ExecuteNonQuery();
-                    }
+                        foreach (var row in DeletedTransactions)
+                        {
+                            //Look up original value to determine a difference later.
+                            decimal originalValue = 0;
 
+                            using var lookupOriginalCmd = userConn.CreateCommand();
+                            lookupOriginalCmd.CommandText = SqlQueryHelper.LookUpOriginalTransactionValueQueryString;
+                            lookupOriginalCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.transaction_id);
+                            using var reader = lookupOriginalCmd.ExecuteReader();
+
+                            if (reader.Read())
+                                originalValue = reader.GetDecimal(0);
+
+                            //Delete datatable row
+                            using var deleteCmd = userConn.CreateCommand();
+                            deleteCmd.CommandText = SqlQueryHelper.DeleteTransactionRowFromDbQueryString;
+                            deleteCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.transaction_id);
+                            deleteCmd.ExecuteNonQuery();
+
+                            //If it's an income, value needs to be subtracted.
+                            if (originalValue > 0)
+                            {
+                                originalValue = Math.Abs(originalValue) * -1;
+                            }
+                            else //If it's an expense, value needs to be added back.
+                            {
+                                originalValue = Math.Abs(originalValue);
+                            }
+
+                            //Update account's balance value.
+                            using var updateBalanceCmd = userConn.CreateCommand();
+                            updateBalanceCmd.CommandText = SqlQueryHelper.UpdateAccountBalanceQueryString;
+                            updateBalanceCmd.Parameters.AddWithValue(SqlQueryHelper.valueParam, originalValue);
+                            updateBalanceCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.account_id);
+
+                            updateBalanceCmd.ExecuteNonQuery();
+                        }
+
+                        if (!isUpdated) isUpdated = true;
+
+                        DeletedTransactions.Clear();
+                    }
+                    
                     //Handle edited rows.
-                    foreach (var row in EditedTransactions)
+                    if (EditedTransactions.Count != 0)
                     {
-                        using var updateCmd = userConn.CreateCommand();
-                        updateCmd.CommandText = SqlQueryHelper.UpdateTransactionRowQueryString;
-                        updateCmd.Parameters.AddWithValue(SqlQueryHelper.descriptionParam, row.description ?? "");
-                        updateCmd.Parameters.AddWithValue(SqlQueryHelper.valueParam, row.trans_amount);
-                        updateCmd.Parameters.AddWithValue(SqlQueryHelper.categoryParam, row.category_id);
-                        updateCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.transaction_id);
-                        
-                        updateCmd.ExecuteNonQuery();
+                        foreach (var row in EditedTransactions)
+                        {
+                            //Look up original value to determine a difference later.
+                            decimal originalValue = 0;
+                            decimal newAmount = row.trans_amount;
+
+                            using var lookupOriginalCmd = userConn.CreateCommand();
+                            lookupOriginalCmd.CommandText = SqlQueryHelper.LookUpOriginalTransactionValueQueryString;
+                            lookupOriginalCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.transaction_id);
+                            using var reader = lookupOriginalCmd.ExecuteReader();
+
+                            if (reader.Read())
+                                originalValue = reader.GetDecimal(0);
+
+                            //Update row in the datatable.
+                            using var updateCmd = userConn.CreateCommand();
+                            updateCmd.CommandText = SqlQueryHelper.UpdateTransactionRowQueryString;
+                            updateCmd.Parameters.AddWithValue(SqlQueryHelper.descriptionParam, row.description ?? "");
+                            updateCmd.Parameters.AddWithValue(SqlQueryHelper.valueParam, row.trans_amount);
+                            updateCmd.Parameters.AddWithValue(SqlQueryHelper.categoryParam, row.category_id);
+                            updateCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.transaction_id);
+
+                            updateCmd.ExecuteNonQuery();
+
+                            //Update account's balance value
+                            if (originalValue != 0)
+                            {
+                                decimal updateValue = newAmount - originalValue;
+
+                                using var updateBalanceCmd = userConn.CreateCommand();
+                                updateBalanceCmd.CommandText = SqlQueryHelper.UpdateAccountBalanceQueryString;
+                                updateBalanceCmd.Parameters.AddWithValue(SqlQueryHelper.valueParam, updateValue);
+                                updateBalanceCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.account_id);
+
+                                updateBalanceCmd.ExecuteNonQuery();
+                            }
+                        }
+
+                        if (!isUpdated) isUpdated = true;
+
+                        EditedTransactions.Clear();
                     }
 
                     //New row entry.
-                    foreach (var row in NewTransactions)
+                    if (NewTransactions.Count != 0)
                     {
-                        using var insertCmd = userConn.CreateCommand();
-                        insertCmd.CommandText = SqlQueryHelper.InsertNewTransactionRowQueryString;
-                        insertCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.account_id);
-                        insertCmd.Parameters.AddWithValue(SqlQueryHelper.descriptionParam, row.description ?? "");
-                        insertCmd.Parameters.AddWithValue(SqlQueryHelper.valueParam, row.trans_amount);
-                        insertCmd.Parameters.AddWithValue(SqlQueryHelper.currencyParam, row.currency_code);
-                        insertCmd.Parameters.AddWithValue(SqlQueryHelper.categoryParam, row.category_id);
-                        insertCmd.Parameters.AddWithValue(SqlQueryHelper.dateParam, row.trans_date);
+                        foreach (var row in NewTransactions)
+                        {
+                            //INSERT row in transactions table.
+                            using var insertCmd = userConn.CreateCommand();
+                            insertCmd.CommandText = SqlQueryHelper.InsertNewTransactionRowQueryString;
+                            insertCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.account_id);
+                            insertCmd.Parameters.AddWithValue(SqlQueryHelper.descriptionParam, row.description ?? "");
+                            insertCmd.Parameters.AddWithValue(SqlQueryHelper.valueParam, row.trans_amount);
+                            insertCmd.Parameters.AddWithValue(SqlQueryHelper.currencyParam, row.currency_code);
+                            insertCmd.Parameters.AddWithValue(SqlQueryHelper.categoryParam, row.category_id);
+                            insertCmd.Parameters.AddWithValue(SqlQueryHelper.dateParam, row.trans_date);
 
-                        insertCmd.ExecuteNonQuery();
+                            insertCmd.ExecuteNonQuery();
+
+                            //UPDATE account's balance value.
+                            using var updateBalanceCmd = userConn.CreateCommand();
+                            updateBalanceCmd.CommandText = SqlQueryHelper.UpdateAccountBalanceQueryString;
+                            updateBalanceCmd.Parameters.AddWithValue(SqlQueryHelper.valueParam, row.trans_amount);
+                            updateBalanceCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, row.account_id);
+
+                            updateBalanceCmd.ExecuteNonQuery();
+                        }
+
+                        if (!isUpdated) isUpdated = true;
+
+                        NewTransactions.Clear();
                     }
 
                     transaction.Commit();
@@ -382,12 +470,8 @@ namespace Luminance.ViewModels
                 }
             });
 
-            if (DeletedTransactionIds.Count != 0 || EditedTransactions.Count != 0 || NewTransactions.Count != 0)
+            if (isUpdated)
             {
-                DeletedTransactionIds.Clear();
-                EditedTransactions.Clear();
-                NewTransactions.Clear();
-
                 TransactionsCollection.Clear();
 
                 _ = UpdateDataGridAsync();

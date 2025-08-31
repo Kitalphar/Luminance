@@ -33,7 +33,7 @@ namespace Luminance.Views
 
                     //Only mark as deleted if it exists in DB
                     if (row.transaction_id > 0)
-                        vm.DeletedTransactionIds.Add(row.transaction_id);
+                        vm.DeletedTransactions.Add(row);
                 }
             }
         }

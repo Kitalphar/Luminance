@@ -114,12 +114,17 @@ namespace Luminance.Helpers
         public const string UpdateSettingQueryString = $"UPDATE {appSettingsDataTable} SET {appSettingsTableValueColumn} = {valueParam} WHERE {appSettingsTableKeyColumn} = {keyParam}";
 
         //TransactionView Queries
-        public const string GetTransactionsFromDbQueryString = "SELECT t.transaction_id, a.account_name AS account_name, t.description, t.trans_amount, cur.currency_code, cat.category_name_en, t.trans_date, cat.category_id FROM transactions t JOIN accounts a ON t.account_id = a.account_id JOIN currencies cur ON t.currency_code = cur.currency_code JOIN categories cat ON t.category_id = cat.category_id ORDER BY t.transaction_id DESC LIMIT 50";
+        public const string GetTransactionsFromDbQueryString = "SELECT t.transaction_id, a.account_name AS account_name, t.description, t.trans_amount, cur.currency_code, cat.category_name_en, t.trans_date, cat.category_id, t.account_id FROM transactions t JOIN accounts a ON t.account_id = a.account_id JOIN currencies cur ON t.currency_code = cur.currency_code JOIN categories cat ON t.category_id = cat.category_id ORDER BY t.transaction_id DESC LIMIT 50";
         public const string GetAccountsFromDbQueryString = $"SELECT {userAccountsAccountIdColumn}, {userAccountsAccountNameColumn}, {userAccountsCurrencyCodeColumn} FROM {userAccountsDataTable}";
         public const string GetCategoriesFromDbQueryStrin = $"SELECT {categoriesTableIdColumn}, {categoriesTableENNameColumn}, {categoriesTableTypeColumn}, {categoriesTableParentIdColumn} FROM {categoriesDataTable} WHERE {categoriesTableIdColumn} > 14";
         public const string DeleteTransactionRowFromDbQueryString = $"DELETE FROM {TransactionsDataTable} WHERE {TransactionsTableTransactionIdColumn} = {idParam}";
         public const string UpdateTransactionRowQueryString = $"UPDATE {TransactionsDataTable} SET {TransactionsTableDescriptionColumn} = {descriptionParam}, {TransactionsTableTransAmountColumn} = {valueParam}, {TransactionsTableCategoryIdColumn} = {categoryParam} WHERE {TransactionsTableTransactionIdColumn} = {idParam}";
         public const string InsertNewTransactionRowQueryString = $"INSERT INTO {TransactionsDataTable} ({TransactionsTableAccountIdColumn}, {TransactionsTableDescriptionColumn}, {TransactionsTableTransAmountColumn}, {TransactionsTableCurrencyCodeColumn}, {TransactionsTableCategoryIdColumn}, {TransactionsTableDateColumn}) VALUES ({idParam},{descriptionParam},{valueParam},{currencyParam},{categoryParam},{dateParam})";
+        public const string LookUpOriginalTransactionValueQueryString = $"SELECT {TransactionsTableTransAmountColumn} FROM {TransactionsDataTable} WHERE {TransactionsTableTransactionIdColumn} = {idParam}";
+        public const string UpdateAccountBalanceQueryString = $"UPDATE {userAccountsDataTable} SET {userAccountsBalanceColumn} = {userAccountsBalanceColumn} + {valueParam} WHERE {userAccountsAccountIdColumn} = {idParam}";
+
+        //DashboardView Module's Queries
+        public const string GetUserAccountDetailsFromDbQueryString =$"SELECT a.account_id, a.account_name, a.balance, c.currency_symbol FROM {userAccountsDataTable} a JOIN {currenciesDataTable} c ON a.currency_code = c.currency_code;";
 
         //Internal SqlHelper queries to support QueryBuilders
         public const string MultiIdReturnByStringKeyHelperQueryString = $"SELECT {localizationTableIdColumn} FROM {localizedStringsTable} WHERE {localizationTableKeyColumn} LIKE {keyParam} ESCAPE '\\'";

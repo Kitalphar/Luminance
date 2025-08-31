@@ -71,6 +71,24 @@
         <Setter Property="FontSize" Value="{DynamicResource FontSize-Small}"/>
         <Setter Property="Grid.ColumnSpan" Value="99"/>
     </Style>
+    
+    <!--TextBlock Styles-->
+    
+    <Style x:Key="AccountsBalanceTextBoxStyle" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
+    </Style>
+
+    <Style x:Key="AccountNameTextBoxStyle" TargetType="TextBlock" BasedOn="{StaticResource AccountsBalanceTextBoxStyle}">
+        <Setter Property="TextAlignment" Value="Left"/>
+        <Setter Property="Margin" Value="10,0,5,0"/>
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+    </Style>
+
+    <Style x:Key="AccountsCurrentBalanceTextBoxStyle" TargetType="TextBlock" BasedOn="{StaticResource AccountsBalanceTextBoxStyle}">
+        <Setter Property="TextAlignment" Value="Right"/>
+        <Setter Property="Margin" Value="5,0,10,0"/>
+    </Style>
 
     <!--Labels-->
     

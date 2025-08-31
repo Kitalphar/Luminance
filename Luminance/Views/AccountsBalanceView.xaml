@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="Luminance.Views.AccountsBalanceView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Luminance.Views"
+             xmlns:vm="clr-namespace:Luminance.ViewModels" d:DataContext="{d:DesignInstance Type=vm:AccountsBalanceViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="350">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.5*"/>
+        </Grid.RowDefinitions>
+
+        <Border Style="{DynamicResource DashboardEmbeddedViewsBorderStyle}"/>
+
+        <TextBlock
+            Text="Account balance"
+            Foreground="{DynamicResource SecondaryTextColor}"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Text="{Binding MainAccount.account_name}"
+                Style="{DynamicResource AccountNameTextBoxStyle}"
+                Grid.Column="0"/>
+            <TextBlock
+                x:Name="MainAccountBalance"
+                Text="{Binding MainAccount.balance}"
+                Foreground="{Binding MainAccountBalanceBrush}"
+                Style="{DynamicResource AccountsCurrentBalanceTextBoxStyle}"
+                Grid.Column="1"/>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Text="{Binding SavingsAccount.account_name}"
+                Style="{DynamicResource AccountNameTextBoxStyle}"
+                Grid.Column="0"/>
+            <TextBlock
+                x:Name="SavingsAccountBalance"
+                Text="{Binding SavingsAccount.balance}"
+                Foreground="{Binding SavingsAccountBalanceBrush}"
+                Style="{DynamicResource AccountsCurrentBalanceTextBoxStyle}"
+                Grid.Column="1"/>
+        </Grid>
+    </Grid>
+</UserControl>

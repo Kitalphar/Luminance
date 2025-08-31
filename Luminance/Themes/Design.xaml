@@ -70,4 +70,10 @@
         <Setter Property="Grid.Column" Value="1"/>
     </Style>
 
+    <Style x:Key="DashboardEmbeddedViewsBorderStyle" TargetType="Border" BasedOn="{StaticResource SecondaryBorderStyle}">
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Grid.RowSpan" Value="999"/>
+        <Setter Property="Grid.ColumnSpan" Value="999"/>
+    </Style>
+
 </ResourceDictionary>
