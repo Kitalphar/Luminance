@@ -46,7 +46,7 @@
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="TextAlignment" Value="Center"/>
     </Style>
-
+    
     <!--Titles-->
     
     <Style x:Key="StartupWindowTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
@@ -64,6 +64,12 @@
 
     <Style x:Key="SetupViewWarningSubTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource WarningTextColorXCenterYCenterTextBlock}">
         <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
+    </Style>
+
+    <Style x:Key="TransactionsViewExplanationText" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextColor}"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-Small}"/>
+        <Setter Property="Grid.ColumnSpan" Value="99"/>
     </Style>
 
     <!--Labels-->

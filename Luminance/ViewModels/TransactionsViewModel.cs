@@ -11,10 +11,6 @@ namespace Luminance.ViewModels
 {
     public class TransactionsViewModel :INotifyPropertyChanged
     {
-        //TODO: Create Observable Collection for data read from Database.
-
-        //TODO: Create Lists for edited, deleted and new rows.
-
         public ObservableCollection<TransactionRow>? TransactionsCollection { get; set; }
 
         public ObservableCollection<Accounts> AccountsCollection { get; } = new();
@@ -29,7 +25,7 @@ namespace Luminance.ViewModels
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public ICommand UploadCommand { get; }
+        public ICommand UpdateCommand { get; }
 
         public class Accounts
         {
@@ -76,8 +72,8 @@ namespace Luminance.ViewModels
             }
         }
 
-        private string _selectedCurrency;
-        public string SelectedCurrency
+        private string? _selectedCurrency;
+        public string? SelectedCurrency
         {
             get => _selectedCurrency;
             set
@@ -87,7 +83,7 @@ namespace Luminance.ViewModels
             }
         }
 
-        private string _newDescription;
+        private string? _newDescription;
         public string? NewDescription
         {
             get => _newDescription;
@@ -129,19 +125,8 @@ namespace Luminance.ViewModels
         public string SelectedDateIso8601 =>
             (_selectedDate ?? DateTime.Now).ToString("yyyy-MM-ddTHH:mm:ss");
 
-        public  TransactionsViewModel()
-        {
-            TransactionsCollection = new ObservableCollection<TransactionRow>();
-
-            UploadCommand = new RelayCommand(UploadChanges);
-
-            InputBalance = 0;
-            SelectedDate = DateTime.Now;
-
-            _ = UpdateDataGridAsync();
-            _ = GetAccountsAsync();
-            _ = GetCategoriesAsync();
-        }
+        public string ExplanationMessage => GetLocalizedString("transactions_explanation", 20);
+        public string WarningMessage => GetLocalizedString("transactions_warning", 21);
 
         public class TransactionRow
         {
@@ -163,6 +148,26 @@ namespace Luminance.ViewModels
             public required string currency_code { get; set; }
             public required int category_id { get; set; }
             public required string trans_date { get; set; }
+        }
+
+        public  TransactionsViewModel()
+        {
+            TransactionsCollection = new ObservableCollection<TransactionRow>();
+
+            UpdateCommand = new RelayCommand(UpdateChanges);
+
+            InputBalance = 0;
+            SelectedDate = DateTime.Now;
+
+            _ = UpdateDataGridAsync();
+            _ = GetAccountsAsync();
+            _ = GetCategoriesAsync();
+        }
+
+        private string GetLocalizedString(string key, int id)
+        {
+            var helper = new LocalizationHelper(key, id, AppSettings.Instance.Get("language"), false);
+            return helper.GetLocalizedString();
         }
 
         private async Task UpdateDataGridAsync()
@@ -267,7 +272,7 @@ namespace Luminance.ViewModels
             return misc?.category_id ?? -1; //If -1 is returned, treat as error
         }
 
-        public void UploadChanges()
+        public void UpdateChanges()
         {
             foreach (var row in EditedTransactions)
                 row.category_id = ResolveCategoryId(row.category_name);
@@ -339,7 +344,6 @@ namespace Luminance.ViewModels
                         deleteCmd.Parameters.AddWithValue(SqlQueryHelper.idParam, id);
                         deleteCmd.ExecuteNonQuery();
                     }
-                    DeletedTransactionIds.Clear();
 
                     //Handle edited rows.
                     foreach (var row in EditedTransactions)
@@ -353,8 +357,6 @@ namespace Luminance.ViewModels
                         
                         updateCmd.ExecuteNonQuery();
                     }
-                    EditedTransactions.Clear();
-
 
                     //New row entry.
                     foreach (var row in NewTransactions)
@@ -370,7 +372,6 @@ namespace Luminance.ViewModels
 
                         insertCmd.ExecuteNonQuery();
                     }
-                    NewTransactions.Clear();
 
                     transaction.Commit();
                 }
@@ -381,9 +382,16 @@ namespace Luminance.ViewModels
                 }
             });
 
-            TransactionsCollection.Clear();
+            if (DeletedTransactionIds.Count != 0 || EditedTransactions.Count != 0 || NewTransactions.Count != 0)
+            {
+                DeletedTransactionIds.Clear();
+                EditedTransactions.Clear();
+                NewTransactions.Clear();
 
-            _ = UpdateDataGridAsync();
+                TransactionsCollection.Clear();
+
+                _ = UpdateDataGridAsync();
+            }
         }
     }
 }
