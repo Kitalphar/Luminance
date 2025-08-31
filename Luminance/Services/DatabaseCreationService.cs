@@ -211,7 +211,7 @@ namespace Luminance.Services
                             case "categories":
                                 cmd.CommandText = SqlQueryHelper.insertDefaultCategoriesQueryString;
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.idParam, dict[SqlQueryHelper.categoriesTableIdColumn]);
-                                cmd.Parameters.AddWithValue(SqlQueryHelper.nameParam, dict[SqlQueryHelper.categoriesTableENNameColumn]);
+                                cmd.Parameters.AddWithValue(SqlQueryHelper.nameParam, dict[SqlQueryHelper.categoriesTableNameColumn]);
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.typeParam, dict[SqlQueryHelper.categoriesTableTypeColumn]);
 
                                 //This is because i had Microsoft.Data.Sql is strict about datatypes.

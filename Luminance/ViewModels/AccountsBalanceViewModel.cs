@@ -17,7 +17,7 @@ namespace Luminance.ViewModels
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        private Brush _mainAccountBalanceBrush = Brushes.Black;
+        private Brush _mainAccountBalanceBrush;
         public Brush MainAccountBalanceBrush
         {
             get => _mainAccountBalanceBrush;
@@ -28,7 +28,7 @@ namespace Luminance.ViewModels
             }
         }
 
-        private Brush _savingsAccountBalanceBrush = Brushes.Black;
+        private Brush _savingsAccountBalanceBrush;
         public Brush SavingsAccountBalanceBrush
         {
             get => _savingsAccountBalanceBrush;
@@ -42,11 +42,11 @@ namespace Luminance.ViewModels
         public Brush PositiveBalanceBrush { get; set; } = Application.Current.TryFindResource("PositiveBalanceBrush") as Brush ?? Brushes.Green;
         public Brush NegativeBalanceBrush { get; set; } = (Brush)Application.Current.TryFindResource("NegativeBalanceBrush") as Brush ?? Brushes.Red;
 
-        public Accounts MainAccount { get; private set; }
-        public Accounts SavingsAccount { get; private set; }
+        public Account MainAccount { get; private set; }
+        public Account SavingsAccount { get; private set; }
 
-        public ObservableCollection<Accounts> AccountsCollection { get; } = new();
-        public class Accounts
+        public ObservableCollection<Account> AccountsCollection { get; } = new();
+        public class Account
         {
             public required int account_id { get; set; }
             public required string account_name { get; set; }
@@ -73,7 +73,7 @@ namespace Luminance.ViewModels
 
                     while (reader.Read())
                     {
-                        Accounts acc = new Accounts
+                        Account acc = new Account
                         {
                             account_id = reader.GetInt32(0),
                             account_name = reader.GetString(1),

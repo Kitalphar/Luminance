@@ -21,9 +21,21 @@ namespace Luminance.ViewModels
             }
         }
 
+        private object? _topCategoriesViewModel;
+        public object? TopCategoriesViewModel
+        {
+            get => _topCategoriesViewModel;
+            set
+            {
+                _topCategoriesViewModel = value;
+                OnPropertyChanged(nameof(TopCategoriesViewModel));
+            }
+        }
+
         public DashboardViewModel()
         {
             AccountsBalanceViewModel = new AccountsBalanceViewModel();
+            TopCategoriesViewModel = new TopCategoriesViewModel();
         }
     }
 }

@@ -12,13 +12,29 @@
         <DataTemplate DataType="{x:Type vm:AccountsBalanceViewModel}">
             <views:AccountsBalanceView/>
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:TopCategoriesViewModel}">
+            <views:TopCategoriesView/>
+        </DataTemplate>
     </UserControl.Resources>
     
     
     <Grid>
-        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.5*"/>
+            <RowDefinition Height="11*"/>
+            <RowDefinition Height="0.5*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.35*"/>
+            <ColumnDefinition Width="12.3*"/>
+            <ColumnDefinition Width="0.35*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--24 x 32-->
+        <Grid Grid.Row="1" Grid.Column="1"> 
+
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.5*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -31,11 +47,19 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            
+
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.5*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -48,16 +72,43 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="0.5*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
             <ContentControl
+                
+                
                 Content="{Binding AccountsBalanceViewModel}"
-                Grid.Column="1"
-                Grid.Row="1"
-                Grid.ColumnSpan="4"
-                Grid.RowSpan="3"/>
+                Grid.Column="0"
+                Grid.Row="0"
+                Grid.ColumnSpan="14"
+                Grid.RowSpan="6"/>
 
+            <ContentControl
+                Content="{Binding TopCategoriesViewModel}"
+                Grid.Column="15"
+                Grid.Row="0"
+                Grid.ColumnSpan="17"
+                Grid.RowSpan="8"/>
         </Grid>
     </Grid>
 </UserControl>
