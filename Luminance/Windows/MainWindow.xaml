@@ -43,7 +43,10 @@
             <Border Style="{DynamicResource MainWindowHeaderBorderStyle}" MouseDown="DragWindow"/>
             <!--Inner border radius-->
             <Border Style="{DynamicResource MainWindowInnerBorderStyle}"/>
-            
+
+            <TextBlock Grid.Column="1" Grid.Row="0"
+                       Style="{DynamicResource MainWindowTitleStyle}"/>
+
             <Button
                 Style="{DynamicResource CloseWindowControlButtonStyle}"
                 Command="{Binding CloseButtonCommand}"

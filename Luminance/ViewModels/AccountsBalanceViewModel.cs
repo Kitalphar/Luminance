@@ -81,8 +81,6 @@ namespace Luminance.ViewModels
                             currency_symbol = reader.GetString(3)
                         };
 
-                        
-
                         //This is for later...
                         Application.Current.Dispatcher.Invoke(() => AccountsCollection.Add(acc));
 

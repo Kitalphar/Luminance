@@ -54,6 +54,12 @@
         <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
     </Style>
 
+    <Style x:Key="MainWindowTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
+        <Setter Property="Text" Value="Luminance"/>
+        <Setter Property="Margin" Value="0,0,170,0"/>
+        <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
+    </Style>
+
     <Style x:Key="SetupViewTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
         <Setter Property="FontSize" Value="{DynamicResource FontSize-Huge}"/>
     </Style>
@@ -275,7 +281,6 @@
                 </Style>
             </Setter.Value>
         </Setter>
-        
     </Style>
 
 </ResourceDictionary>

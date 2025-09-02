@@ -30,7 +30,7 @@ namespace Luminance.Services
 
             foreach (var b in bytes)
             {
-                // Get an index from 0 to 61 (size of charSet) and add corresponding character to the key
+                //Get an index from 0 to 61 (size of charSet) and add corresponding character to the key
                 keyBuilder.Append(charSet[b % charSet.Length]);
             }
 

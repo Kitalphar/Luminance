@@ -47,8 +47,8 @@ namespace Luminance.ViewModels
             }
         }
 
-        private string _selectedMenu;
-        public string SelectedMenu
+        private MenuSelectionFilter _selectedMenu;
+        public MenuSelectionFilter SelectedMenu
         {
             get => _selectedMenu;
             set
@@ -62,6 +62,11 @@ namespace Luminance.ViewModels
             }
         }
 
+        public enum MenuSelectionFilter
+        {
+            Dashboard,
+            Transactions
+        }
 
         public MainWindowViewModel()
         {
@@ -83,12 +88,9 @@ namespace Luminance.ViewModels
             {
                 UpdateLocalisedMenuStrings();
 
-                //Continue to Dashboard.
-                //var dashboardViewModel = new DashboardViewModel();
-                //CurrentViewModel = dashboardViewModel;
-
-                SelectedMenu = "Dashboard";
                 IsSetupComplete = true;
+
+                UpdateCurrentViewModel();
             }
         }
 
@@ -96,10 +98,10 @@ namespace Luminance.ViewModels
         {
             switch (_selectedMenu)
             {
-                case "Dashboard":
+                case MenuSelectionFilter.Dashboard:
                     CurrentViewModel = new DashboardViewModel();
                     break;
-                case "Transactions":
+                case MenuSelectionFilter.Transactions:
                     CurrentViewModel = new TransactionsViewModel();
                     break;
             }
@@ -138,8 +140,7 @@ namespace Luminance.ViewModels
                 //Set localised menu titles after settings changed.
                 UpdateLocalisedMenuStrings();
 
-                var dashboardViewModel = new DashboardViewModel();
-                CurrentViewModel = dashboardViewModel;
+                UpdateCurrentViewModel();
             });
         }
 

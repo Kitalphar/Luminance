@@ -48,7 +48,7 @@ namespace Luminance.ViewModels
                 Application.Current.MainWindow = mainWindow;
                 mainWindow.Show();
 
-                //Cloose the StartupWindow
+                //Close the StartupWindow
                 Application.Current.Windows
                     .OfType<Window>()
                     .FirstOrDefault(w => w is StartupWindow)

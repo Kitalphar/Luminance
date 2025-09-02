@@ -6,6 +6,13 @@ namespace Luminance.Services
 {
     public class DatabaseCreationService
     {
+
+        private enum QueryFilter
+        {
+            Categories,
+            Currencies
+        }
+
         public static void CreateNewDatabase(string userName, string password)
         {
 
@@ -22,7 +29,7 @@ namespace Luminance.Services
                 string recoveryKey = cryptoService.GenerateRecoveryKey();
 
                 /*Store recoveryKey as a flag for new user creation and to show it
-                  to user later (may be changed later. */
+                  to user later (may be changed later.) */
                 AppSettings.Instance.Set("recoveryKey", recoveryKey);
 
                 //Derive user Encryption Key from Password.
@@ -41,8 +48,6 @@ namespace Luminance.Services
                 //Store encrypted user data in App.db
                 AppDbQueryCoordinator.RunQuery(conn =>
                 {
-                    //const string createUser = "INSERT INTO accounts (user_name,user_db,pw_salt,user_key) VALUES (@username,@dbname,@pwsalt,@userkey)";
-
                     using var command1 = new SqliteCommand();
 
                     using var command = new SqliteCommand(SqlQueryHelper.createUserQueryString, conn);
@@ -100,14 +105,11 @@ namespace Luminance.Services
                 if (File.Exists(dbFile))
                     throw new IOException("ERR_IO_DB_FILE_EXISTS(701)");
 
-                //SQLiteConnection.CreateFile(dbFile);
-
                 string userKey = AppSettings.Instance.Get("userKey");
                 if (string.IsNullOrEmpty(userKey))
                     throw new InvalidOperationException("ERR_USERKEY_NOT_AVAILABLE(221)");
 
                 //Connect to User's database file & initialize SqlCipher
-                //string connectionString = $"Data Source={dbFile};Version=3;";
                 string connectionString = $"Data Source={dbFile};";
                 UserDatabaseService.Initialize(connectionString);
 
@@ -121,11 +123,11 @@ namespace Luminance.Services
 
                 //Create default categories.
                 string categoriesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/csv/categories.csv");
-                InsertDeafultValuesFromCsv(categoriesPath, "categories");
+                InsertDeafultValuesFromCsv(categoriesPath, QueryFilter.Categories);
 
                 //Create currencies (This has to be before accounts because of foreign key constraints.)
                 string currenciesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/csv/currencies.csv");
-                InsertDeafultValuesFromCsv(currenciesPath, "currencies");
+                InsertDeafultValuesFromCsv(currenciesPath, QueryFilter.Currencies);
 
                 //Look up querystrings and create default accounts
                 var createAccountsQueries = GetDbScriptsFromAppDb(SqlQueryHelper.defaultValuesQueryString);
@@ -190,7 +192,7 @@ namespace Luminance.Services
             });
         }
 
-        private static void InsertDeafultValuesFromCsv(string csvPath, string filter)
+        private static void InsertDeafultValuesFromCsv(string csvPath, QueryFilter filter)
         {
             var records = CsvParser.ParseCsv<dynamic>(csvPath);
 
@@ -208,7 +210,7 @@ namespace Luminance.Services
 
                         switch (filter)
                         {
-                            case "categories":
+                            case QueryFilter.Categories:
                                 cmd.CommandText = SqlQueryHelper.insertDefaultCategoriesQueryString;
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.idParam, dict[SqlQueryHelper.categoriesTableIdColumn]);
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.nameParam, dict[SqlQueryHelper.categoriesTableNameColumn]);
@@ -219,7 +221,7 @@ namespace Luminance.Services
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.categoriesTableParentIdParam,string.IsNullOrEmpty(parentIdRaw) ? DBNull.Value : (object)parentIdRaw);
                                 //cmd.Parameters.AddWithValue(SqlQueryHelper.categoriesTableParentIdParam, dict[SqlQueryHelper.categoriesTableParentIdColumn]);
                                 break;
-                            case "currencies":
+                            case QueryFilter.Currencies:
                                 cmd.CommandText = SqlQueryHelper.insertDefaultCurrenciesQueryString;
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.idParam, dict[SqlQueryHelper.currenciesTableIdColumn]);
                                 cmd.Parameters.AddWithValue(SqlQueryHelper.descriptionParam, dict[SqlQueryHelper.currenciesTableSymbolColumn]);
@@ -241,50 +243,50 @@ namespace Luminance.Services
         }
 
         //Use this in the future or put it somewhere else later?
-        public static void InsertGenericCsv(string csvPath, string tableName)
-        {
-            var records = CsvParser.ParseCsv<dynamic>(csvPath);
+        //public static void InsertGenericCsv(string csvPath, string tableName)
+        //{
+        //    var records = CsvParser.ParseCsv<dynamic>(csvPath);
 
-            if (records.Count == 0)
-                return;
+        //    if (records.Count == 0)
+        //        return;
 
-            var columnNames = CsvParser.GetColumnNames(records);
+        //    var columnNames = CsvParser.GetColumnNames(records);
 
-            //Validate columns match table schema?
+        //    //Validate columns match table schema?
 
-            SecureUserDbQueryCoordinator.RunTransaction(userConn =>
-            {
-                using var transaction = userConn.BeginTransaction();
+        //    SecureUserDbQueryCoordinator.RunTransaction(userConn =>
+        //    {
+        //        using var transaction = userConn.BeginTransaction();
 
-                try
-                {
-                    foreach (var row in records)
-                    {
-                        var dict = (IDictionary<string, object>)row;
+        //        try
+        //        {
+        //            foreach (var row in records)
+        //            {
+        //                var dict = (IDictionary<string, object>)row;
 
-                        string columns = string.Join(", ", columnNames);
-                        string placeholders = string.Join(", ", columnNames.Select(col => "@" + col));
+        //                string columns = string.Join(", ", columnNames);
+        //                string placeholders = string.Join(", ", columnNames.Select(col => "@" + col));
 
-                        using var cmd = userConn.CreateCommand();
-                        cmd.CommandText = $"INSERT INTO {tableName} ({columns}) VALUES ({placeholders})";
+        //                using var cmd = userConn.CreateCommand();
+        //                cmd.CommandText = $"INSERT INTO {tableName} ({columns}) VALUES ({placeholders})";
 
-                        foreach (var col in columnNames)
-                        {
-                            cmd.Parameters.AddWithValue("@" + col, dict.TryGetValue(col, out var val) ? val ?? DBNull.Value : DBNull.Value);
-                        }
+        //                foreach (var col in columnNames)
+        //                {
+        //                    cmd.Parameters.AddWithValue("@" + col, dict.TryGetValue(col, out var val) ? val ?? DBNull.Value : DBNull.Value);
+        //                }
 
-                        cmd.ExecuteNonQuery();
-                    }
+        //                cmd.ExecuteNonQuery();
+        //            }
 
-                    transaction.Commit();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-            });
-        }
+        //            transaction.Commit();
+        //        }
+        //        catch
+        //        {
+        //            transaction.Rollback();
+        //            throw;
+        //        }
+        //    });
+        //}
     }
 }
 
