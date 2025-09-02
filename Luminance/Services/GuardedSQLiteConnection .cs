@@ -1,8 +1,8 @@
-﻿using System.Data.SQLite;
+﻿using Microsoft.Data.Sqlite;
 
 internal class GuardedSQLiteConnection : IDisposable
 {
-    private readonly SQLiteConnection _innerConnection;
+    private readonly SqliteConnection _innerConnection;
     private readonly string _callerContext;
     private static bool _accessAllowed = false;
 
@@ -16,12 +16,12 @@ internal class GuardedSQLiteConnection : IDisposable
         if (!_accessAllowed)
             throw new InvalidOperationException($"Unauthorized SQLite access detected from: {callerContext}");
 
-        _innerConnection = new SQLiteConnection(connectionString);
+        _innerConnection = new SqliteConnection(connectionString);
         _callerContext = callerContext;
         _innerConnection.Open();
     }
 
-    public SQLiteCommand CreateCommand() => _innerConnection.CreateCommand();
+    public SqliteCommand CreateCommand() => _innerConnection.CreateCommand();
 
     public void Dispose() => _innerConnection.Dispose();
 }
