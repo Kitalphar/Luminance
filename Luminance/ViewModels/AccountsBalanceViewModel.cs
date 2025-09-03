@@ -54,10 +54,29 @@ namespace Luminance.ViewModels
             public required string currency_symbol { get; set; }
         }
 
+        private string? _viewTitle;
+        public string? ViewTitle
+        {
+            get => _viewTitle;
+            set
+            {
+                _viewTitle = value;
+                OnPropertyChanged(nameof(ViewTitle));
+            }
+        }
+
+        private string GetLocalizedString(string key, int id)
+        {
+            var helper = new LocalizationHelper(key, id, AppSettings.Instance.Get("language"), false);
+            return helper.GetLocalizedString();
+        }
+
         public AccountsBalanceViewModel()
         {
             MainAccountBalanceBrush = NegativeBalanceBrush;
             SavingsAccountBalanceBrush = NegativeBalanceBrush;
+
+            ViewTitle = GetLocalizedString("account_balance_title", 38);
 
             _ = GetAccountsAsync();
         }

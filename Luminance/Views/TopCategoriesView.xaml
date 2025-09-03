@@ -22,7 +22,7 @@
         <Border Style="{DynamicResource DashboardEmbeddedViewsBorderStyle}"/>
 
         <TextBlock
-            Text="Top Categories"
+            Text="{Binding ViewTitle}"
             Foreground="{DynamicResource SecondaryTextColor}"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"

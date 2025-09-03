@@ -103,10 +103,17 @@
                 Grid.ColumnSpan="14"
                 Grid.RowSpan="6"/>
 
-            <ContentControl
-                Content="{Binding TopCategoriesViewModel}"
+            <ContentControl x:Name="CurrentMonthTopCategories"
+                Content="{Binding CurrentMonthViewModel}"
                 Grid.Column="15"
                 Grid.Row="0"
+                Grid.ColumnSpan="17"
+                Grid.RowSpan="8"/>
+
+            <ContentControl x:Name="LastMonthTopCategories"
+                Content="{Binding LastMonthViewModel}"
+                Grid.Column="15"
+                Grid.Row="9"
                 Grid.ColumnSpan="17"
                 Grid.RowSpan="8"/>
         </Grid>

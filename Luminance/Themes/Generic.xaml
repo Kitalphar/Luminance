@@ -56,6 +56,7 @@
 
     <Style x:Key="MainWindowTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource PrimaryTextColorXCenterYCenterTextBlock}">
         <Setter Property="Text" Value="Luminance"/>
+        <Setter Property="Width" Value="130"/>
         <Setter Property="Margin" Value="0,0,170,0"/>
         <Setter Property="FontSize" Value="{DynamicResource FontSize-XLarge}"/>
     </Style>

@@ -9,6 +9,12 @@ using Microsoft.Data.Sqlite;
 
 namespace Luminance.ViewModels
 {
+    public enum CategorySummaryMode
+    {
+        CurrentMonth,
+        LastMonth
+    }
+
     public class TopCategoriesViewModel : INotifyPropertyChanged
     {
 
@@ -136,15 +142,57 @@ namespace Luminance.ViewModels
         public Brush PositiveBalanceBrush { get; set; } = Application.Current.TryFindResource("PositiveBalanceBrush") as Brush ?? Brushes.Green;
         public Brush NegativeBalanceBrush { get; set; } = (Brush)Application.Current.TryFindResource("NegativeBalanceBrush") as Brush ?? Brushes.Red;
 
-        public TopCategoriesViewModel()
+
+        private string? _viewTitle;
+        public string? ViewTitle
         {
+            get => _viewTitle;
+            set
+            {
+                _viewTitle = value;
+                OnPropertyChanged(nameof(ViewTitle));
+            }
+        }
+
+        private CategorySummaryMode _selectedSummaryMode;
+        public CategorySummaryMode SelectedSummaryMode
+        {
+            get => _selectedSummaryMode;
+            set
+            {
+                _selectedSummaryMode = value;
+                OnPropertyChanged(nameof(SelectedSummaryMode));
+            }
+        }
+
+        public TopCategoriesViewModel(CategorySummaryMode summaryMode)
+        {
+            SelectedSummaryMode = summaryMode;
+
             FirstCategoryBrush = NegativeBalanceBrush;
             SecondCategoryBrush = NegativeBalanceBrush;
             ThirdCategoryBrush = NegativeBalanceBrush;
             FourthCategoryBrush = NegativeBalanceBrush;
             FifthCategoryBrush = NegativeBalanceBrush;
 
+            switch (SelectedSummaryMode)
+            {
+                case CategorySummaryMode.CurrentMonth:
+                    ViewTitle = GetLocalizedString("top_categories_current_month", 36);
+                    break;
+                case CategorySummaryMode.LastMonth:
+                    ViewTitle = GetLocalizedString("top_categories_last_month", 37);
+                    break;
+            }
+
+
             _ = GetTopCategoriesAsync();
+        }
+
+        private string GetLocalizedString(string key, int id)
+        {
+            var helper = new LocalizationHelper(key, id, AppSettings.Instance.Get("language"), false);
+            return helper.GetLocalizedString();
         }
 
         private async Task GetTopCategoriesAsync()
@@ -153,7 +201,19 @@ namespace Luminance.ViewModels
             {
                 SecureUserDbQueryCoordinator.RunQuery(userConn =>
                 {
-                    using var command = new SqliteCommand(SqlQueryHelper.GetTopFiveCategoryQueryString, userConn);
+                    string queryString = string.Empty;
+
+                    switch (SelectedSummaryMode)
+                    {
+                        case CategorySummaryMode.CurrentMonth:
+                            queryString = SqlQueryHelper.GetTopFiveCategoryFromCurrentMonthQueryString;
+                            break;
+                        case CategorySummaryMode.LastMonth:
+                            queryString = SqlQueryHelper.GetTopFiveCategoryFromLastMonthQueryString;
+                            break;
+                    }
+
+                    using var command = new SqliteCommand(queryString, userConn);
                     using var reader = command.ExecuteReader();
 
                     //Modify categories table later to have limits on every major category.

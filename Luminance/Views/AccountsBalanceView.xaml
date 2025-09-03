@@ -19,7 +19,7 @@
         <Border Style="{DynamicResource DashboardEmbeddedViewsBorderStyle}"/>
 
         <TextBlock
-            Text="Account balance"
+            Text="{Binding ViewTitle}"
             Foreground="{DynamicResource SecondaryTextColor}"
             VerticalAlignment="Center"
             HorizontalAlignment="Center"

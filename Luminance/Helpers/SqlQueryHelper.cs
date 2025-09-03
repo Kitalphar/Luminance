@@ -133,12 +133,32 @@ namespace Luminance.Helpers
 
         //DashboardView Module's Queries
         public const string GetUserAccountDetailsFromDbQueryString =$"SELECT a.account_id, a.account_name, a.balance, c.currency_symbol FROM {userAccountsDataTable} a JOIN {currenciesDataTable} c ON a.currency_code = c.currency_code;";
-        public const string GetTopFiveCategoryQueryString = $@"
+        public const string GetTopFiveCategoryAllTimeQueryString = $@"
                             SELECT COALESCE(p.{categoriesTableNameColumn}, c.{categoriesTableNameColumn}) AS category_name,
                                    SUM(t.{TransactionsTableTransAmountColumn}) AS TotalSpent
                             FROM {TransactionsDataTable} t
                             JOIN {categoriesDataTable} c ON t.{categoriesTableIdColumn} = c.{categoriesTableIdColumn}
                             LEFT JOIN {categoriesDataTable} p ON c.{categoriesTableParentIdColumn} = p.{categoriesTableIdColumn}
+                            GROUP BY COALESCE(p.{categoriesTableIdColumn}, c.{categoriesTableIdColumn}), COALESCE(p.{categoriesTableNameColumn}, c.{categoriesTableNameColumn})
+                            ORDER BY TotalSpent ASC
+                            LIMIT 5";
+        public const string GetTopFiveCategoryFromCurrentMonthQueryString = $@"
+                            SELECT COALESCE(p.{categoriesTableNameColumn}, c.{categoriesTableNameColumn}) AS category_name,
+                                   SUM(t.{TransactionsTableTransAmountColumn}) AS TotalSpent
+                            FROM {TransactionsDataTable} t
+                            JOIN {categoriesDataTable} c ON t.{categoriesTableIdColumn} = c.{categoriesTableIdColumn}
+                            LEFT JOIN {categoriesDataTable} p ON c.{categoriesTableParentIdColumn} = p.{categoriesTableIdColumn}
+                            WHERE t.{TransactionsTableDateColumn} >= date('now', 'start of month')
+                            GROUP BY COALESCE(p.{categoriesTableIdColumn}, c.{categoriesTableIdColumn}), COALESCE(p.{categoriesTableNameColumn}, c.{categoriesTableNameColumn})
+                            ORDER BY TotalSpent ASC
+                            LIMIT 5";
+        public const string GetTopFiveCategoryFromLastMonthQueryString = $@"
+                            SELECT COALESCE(p.{categoriesTableNameColumn}, c.{categoriesTableNameColumn}) AS category_name,
+                                   SUM(t.{TransactionsTableTransAmountColumn}) AS TotalSpent
+                            FROM {TransactionsDataTable} t
+                            JOIN {categoriesDataTable} c ON t.{categoriesTableIdColumn} = c.{categoriesTableIdColumn}
+                            LEFT JOIN {categoriesDataTable} p ON c.{categoriesTableParentIdColumn} = p.{categoriesTableIdColumn}
+                            WHERE t.{TransactionsTableDateColumn} >= date('now', 'start of month', '-1 month') AND t.{TransactionsTableDateColumn} <  date('now', 'start of month')
                             GROUP BY COALESCE(p.{categoriesTableIdColumn}, c.{categoriesTableIdColumn}), COALESCE(p.{categoriesTableNameColumn}, c.{categoriesTableNameColumn})
                             ORDER BY TotalSpent ASC
                             LIMIT 5";

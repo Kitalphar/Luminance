@@ -21,21 +21,33 @@ namespace Luminance.ViewModels
             }
         }
 
-        private object? _topCategoriesViewModel;
-        public object? TopCategoriesViewModel
+        private object? _lastMonthViewModel;
+        public object? LastMonthViewModel
         {
-            get => _topCategoriesViewModel;
+            get => _lastMonthViewModel;
             set
             {
-                _topCategoriesViewModel = value;
-                OnPropertyChanged(nameof(TopCategoriesViewModel));
+                _lastMonthViewModel = value;
+                OnPropertyChanged(nameof(LastMonthViewModel));
+            }
+        }
+
+        private object? _currentMonthViewModel;
+        public object? CurrentMonthViewModel
+        {
+            get => _currentMonthViewModel;
+            set
+            {
+                _currentMonthViewModel = value;
+                OnPropertyChanged(nameof(CurrentMonthViewModel));
             }
         }
 
         public DashboardViewModel()
         {
             AccountsBalanceViewModel = new AccountsBalanceViewModel();
-            TopCategoriesViewModel = new TopCategoriesViewModel();
+            CurrentMonthViewModel = new TopCategoriesViewModel(CategorySummaryMode.CurrentMonth);
+            LastMonthViewModel = new TopCategoriesViewModel(CategorySummaryMode.LastMonth);
         }
     }
 }
