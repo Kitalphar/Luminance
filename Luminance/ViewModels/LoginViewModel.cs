@@ -52,15 +52,14 @@ namespace Luminance.ViewModels
             public string Language { get; set; } = String.Empty;
         }
 
-        public string WelcomeMessage { get; set; }
-        
+        public string WelcomeMessage => GetLocalizedString("loginwindow_description", 10);
+        public string LoginButtonText => GetLocalizedString("login_button", 22);
+        public string RegisterButtonText => GetLocalizedString("register_button", 23);
+
         public LoginViewModel()
         {
             HandleLoginCommand = new RelayCommand(HandleLogin);
             HandleRegistrationCommand = new RelayCommand(HandleRegistration);
-
-            var localizer = new LocalizationHelper("loginwindow_description", 10, AppSettings.Instance.Get("language"), false);
-            WelcomeMessage = localizer.GetLocalizedString();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -164,6 +163,12 @@ namespace Luminance.ViewModels
                 throw new ArgumentException(sanitizedPassword.Error);
 
             return (sanitizedUserName.Result, sanitizedPassword.Result);
+        }
+
+        private string GetLocalizedString(string key, int id)
+        {
+            var helper = new LocalizationHelper(key, id, AppSettings.Instance.Get("language"), false);
+            return helper.GetLocalizedString();
         }
 
         private void HandleUserDataError(string errorCodeAndId)

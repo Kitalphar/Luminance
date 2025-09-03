@@ -29,6 +29,7 @@
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Tests\" />
     <Folder Include="Resources\icons\" />
   </ItemGroup>
 

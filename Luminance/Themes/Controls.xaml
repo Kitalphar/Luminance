@@ -12,7 +12,8 @@
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="FontSize" Value="{DynamicResource FontSize-Medium}"/>
         <Setter Property="Foreground" Value="{DynamicResource InvertedTextColor}"/>
-        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Padding" Value="5,10,5,10"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     </Style>
 
     <Style x:Key="LoginWindowTextBoxBorderStyle" TargetType="Border">
@@ -30,6 +31,7 @@
         <Setter Property="Margin" Value="5,0,0,0"/>
         <Setter Property="Foreground" Value="{DynamicResource PlaceholderTextColor}"/>
         <Setter Property="Panel.ZIndex" Value="-1"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     </Style>
     
     <!--Recovery Key Text Box-->

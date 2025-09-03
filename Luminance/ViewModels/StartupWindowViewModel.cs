@@ -35,7 +35,6 @@ namespace Luminance.ViewModels
 
             CurrentViewModel = loginViewModel;
 
-            //System.Diagnostics.Debug.WriteLine("CurrentViewModel set: " + (CurrentViewModel != null));
         }
 
         private void OnLoginSuccess()

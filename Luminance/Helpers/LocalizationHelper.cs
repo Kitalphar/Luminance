@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Luminance.Services;
+﻿using Luminance.Services;
 using Microsoft.Data.Sqlite;
 
 namespace Luminance.Helpers
@@ -8,7 +7,7 @@ namespace Luminance.Helpers
     {
         private string _localizationKey = string.Empty;
         private int _localizationId = 0;
-        private string _localizationLanguage = "en"; // Default fallback
+        private string _localizationLanguage = "en";
         private bool _isWithEscapeCharacter = false;
 
         private List<int> _localizationIdList = new();
@@ -30,8 +29,6 @@ namespace Luminance.Helpers
 
         public string GetLocalizedString()
         {
-            var language = AppSettings.Instance.Get("language");
-
             //Trying to get translated string by their string Key.
             string result = QueryLocalizedString(LocalizationFilter.Key);
 

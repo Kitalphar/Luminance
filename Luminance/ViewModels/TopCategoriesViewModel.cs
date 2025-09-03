@@ -204,7 +204,6 @@ namespace Luminance.ViewModels
                                     break;
                             }
                         });
-                        Trace.WriteLine($"Cat: {cat.balance}");
                         count++;
                     }
                 });

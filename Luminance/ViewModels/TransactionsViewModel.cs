@@ -127,6 +127,15 @@ namespace Luminance.ViewModels
         public string ExplanationMessage => GetLocalizedString("transactions_explanation", 20);
         public string WarningMessage => GetLocalizedString("transactions_warning", 21);
 
+        public string UpdateButtonText => GetLocalizedString("update_button", 24);
+        public string AccountInputBoxDescription => GetLocalizedString("transactions_input_account_label", 31);
+        public string DescriptionInputBoxDescription => GetLocalizedString("transactions_input_description_label", 32);
+        public string AmountInputBoxDescription => GetLocalizedString("transactions_input_amount_label", 33);
+        public string CategoryInputBoxDescription => GetLocalizedString("transactions_input_category_label", 34);
+        public string DateInputBoxDescription => GetLocalizedString("transactions_input_date_label", 35);
+        
+
+
         public class TransactionRow
         {
             public required int transaction_id { get; set; }

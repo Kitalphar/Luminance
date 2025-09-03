@@ -5,8 +5,8 @@
              xmlns:view="clr-namespace:Luminance.Views"
              xmlns:viewModel="clr-namespace:Luminance.ViewModels"
              Startup="Application_Startup"
-             ShutdownMode="OnExplicitShutdown"
-             >
+             ShutdownMode="OnExplicitShutdown">
+    
     <Application.Resources>
 
 
