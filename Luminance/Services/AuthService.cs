@@ -20,7 +20,7 @@ namespace Luminance.Services
             string userNameHash = result.userNameHash;
             string dbName = result.dbName;
 
-            //Encrypt password.
+            //Decrypt password.
             string userKey = FindUserkey(userNameHash, password, false);
 
             //Storing userKey early for SqlCipher

@@ -50,7 +50,7 @@ namespace Luminance.Services
                 .Replace("=", "9");
         }
 
-        private static string EncryptToBase64(byte[] plainBytes, byte[] key)
+        public static string EncryptToBase64(byte[] plainBytes, byte[] key)
         {
             byte[] nonce = new byte[12];
             using var rng = RandomNumberGenerator.Create();
@@ -70,7 +70,7 @@ namespace Luminance.Services
             return Convert.ToBase64String(result);
         }
 
-        private static byte[] DecryptFromBase64(string base64CipherText, byte[] key)
+        public static byte[] DecryptFromBase64(string base64CipherText, byte[] key)
         {
             byte[] encryptedBytes = Convert.FromBase64String(base64CipherText);
             const int nonceLength = 12;
@@ -87,12 +87,12 @@ namespace Luminance.Services
             Buffer.BlockCopy(encryptedBytes, nonceLength, cipherText, 0, cipherText.Length);
             Buffer.BlockCopy(encryptedBytes, nonceLength + cipherText.Length, authenticationTag, 0, tagLength);
 
-            byte[] plainText = new byte[cipherText.Length];
+            byte[] returnBytes = new byte[cipherText.Length];
 
             using var aesGcm = new AesGcm(key, 16);
-            aesGcm.Decrypt(nonce, cipherText, authenticationTag, plainText);
+            aesGcm.Decrypt(nonce, cipherText, authenticationTag, returnBytes);
 
-            return plainText;
+            return returnBytes;
         }
 
         public static byte[] ConvertTo16ByteKey(string input)

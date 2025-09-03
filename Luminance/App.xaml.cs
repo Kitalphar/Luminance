@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using Luminance.Helpers;
 using Luminance.Services;
+using Luminance.Tests;
 using Luminance.ViewModels;
 
 namespace Luminance
@@ -44,6 +45,10 @@ namespace Luminance
             var culture = new CultureInfo("en-US");
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+
+#if DEBUG
+            CryptoServiceTests.RunAll();
+#endif
 
             StartupWindow startupWindow = new StartupWindow();
             StartupWindowViewModel startupWindowViewModel = new StartupWindowViewModel(); 

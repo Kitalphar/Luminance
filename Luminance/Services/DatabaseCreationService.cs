@@ -15,7 +15,6 @@ namespace Luminance.Services
 
         public static void CreateNewDatabase(string userName, string password)
         {
-
             try
             {
                 ICryptoService cryptoService = new CryptoService();
